@@ -1,7 +1,7 @@
 title:
-  en_us: Structural
-  chinese_s: "结构"
+  en_us: Selection
+  chinese_s: "选择"
 layout:
   - WIP
   - -----
-  - Numbering
+  - query

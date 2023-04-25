@@ -26,13 +26,13 @@ all_Sheets.OfCategory(BuiltInCategory.OST_Sheets)
 all_Sheets.WhereElementIsNotElementType()
 all_Sheets_Ele = all_Sheets.ToElements()
 
-indicat = all_Sheets_Ele[0].LookupParameter("Sheet Number").AsString()
+indicat = all_Sheets_Ele[0].get_Parameter(BuiltInParameter.SHEET_NUMBER).AsString()
 indicator = indicat.startswith("FB")
 
 sheetsNum = []
 
 for i in all_Sheets_Ele:
-    num = i.LookupParameter("Sheet Number")
+    num = i.get_Parameter(BuiltInParameter.SHEET_NUMBER)
        
     numValue = num.AsString()
     
@@ -52,7 +52,7 @@ renumber = createList(1,len(indices))  #rename with the renumber
 t.Start()
 
 for i,j in zip(indices,renumber):
-     num2 = all_Sheets_Ele[i].LookupParameter("Sheet Number")
+     num2 = all_Sheets_Ele[i].get_Parameter(BuiltInParameter.SHEET_NUMBER)
      numstr = str(j)
      
      if indicator:

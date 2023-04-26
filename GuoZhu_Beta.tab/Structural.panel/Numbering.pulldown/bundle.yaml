@@ -1,3 +1,6 @@
+title:
+  en_us: Numbering
+  chinese_s: "刷新编号"
 layout:
   - frameNum
   - plateNum

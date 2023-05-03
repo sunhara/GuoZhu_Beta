@@ -10,7 +10,7 @@ from Autodesk.Revit.DB import*
 doc = __revit__.ActiveUIDocument.Document
 
 
-# Creating collector instance and collecting all the walls from the model
+# Creating collector instance and collecting all the stiffeners from the model
 all_stiffeners = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralStiffener).WhereElementIsNotElementType()
 
 t = Transaction(doc,"This is a new transaction")

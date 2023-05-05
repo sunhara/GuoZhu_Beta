@@ -1,0 +1,8 @@
+title:
+  en_us: Batch Schedules
+  chinese_s: "批量\n导清单"
+layout:
+  - BatchExpoSchedulesMulti
+  - BatchExpoSchedulesSingle
+
+

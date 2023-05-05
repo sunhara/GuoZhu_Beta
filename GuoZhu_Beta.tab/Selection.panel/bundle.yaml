@@ -3,5 +3,6 @@ title:
   chinese_s: "选择"
 layout:
   - WIP
+  - BatchExpoSchedules
   - -----
   - query

@@ -2,8 +2,9 @@
 import json	
 import os
 import clr
-import csv 
-import codecs
+
+clr.AddReference('System')
+from System.Collections.Generic import List
 
 from pyrevit import forms	
 from pyrevit import script
@@ -12,65 +13,64 @@ import Autodesk
 from Autodesk.Revit.DB import*
 
 doc = __revit__.ActiveUIDocument.Document
-
-# Define the file path
-file_path = os.environ['USERPROFILE'] + '\Desktop'
-
-print('位置' + os.environ['USERPROFILE'] + '\Desktop')
+uidoc = __revit__.ActiveUIDocument
+active_view = uidoc.ActiveView
 
 
-selection = __revit__.ActiveUIDocument.Selection.GetElementIds()
+def isolate_elements(elements, view):
+    # type:(List[ElementId], View) -> None
+    "Function to Isolate Elements in the given View."
 
-elements = []
+    hide_elem = FilteredElementCollector(doc, view.Id).Excluding(elements).WhereElementIsNotElementType().ToElements()
 
-# Loop through the element IDs and get the corresponding Revit element for each ID
-for id in selection:
-    element = doc.GetElement(id)
-    elements.append(element)
-
-
-first_ele = elements[0]
-restOf_ele = elements
-restOf_ele.pop(0)
+    hide_elem_ids = [e.Id for e in hide_elem 
+                      if e.CanBeHidden(view)]
 
 
-export_options = ViewScheduleExportOptions()
-export_options.FieldDelimiter = ","  # set the field delimiter to comma
-export_options.Title = True
-    
-first_ele.Export(file_path, "合并清单.csv", export_options)
-
-dataListRow = []
-for schedule in restOf_ele:
-    
-    table = schedule.GetTableData().GetSectionData(SectionType.Body)
-    nRows = table.NumberOfRows
-    nColumns = table.NumberOfColumns
-
-    #Collect all of data from the schedule
-    
-    for row in range(nRows): #Iterate through the rows. The second row is always a blank space
-        dataListColumn = []
-        for column in range(nColumns): #Iterate through the columns
-            dataListColumn.Add( TableView.GetCellText(schedule, SectionType.Body, row, column) )
-          
-        dataListRow.Add( dataListColumn )
+    view.HideElements(List[ElementId](hide_elem_ids))
 
 
 
-# In Python2.x use codecs for encoding
-with codecs.open('{}\\合并清单.csv'.format(file_path), mode = 'a', encoding ="utf-8") as file:
-    writer = csv.writer(file, delimiter=",")
-    
-    for row in dataListRow:
-
-        writer.writerow(row)
-        
+#STAR THE TRANSACTION!!!
+t = Transaction(doc, 'Isolate Elements')
+t.Start()
 
 
+elements_to_isolate = [doc.GetElement(e_id) 
+        for e_id in uidoc.Selection.GetElementIds()]
+
+part_mark = elements_to_isolate[0].LookupParameter("工厂加工-零件标号").AsString()
+
+List_isolate_ids = uidoc.Selection.GetElementIds()
+
+#Created new view with name
+new_viewId = active_view.Duplicate(ViewDuplicateOption.Duplicate)
+new_view_ele = doc.GetElement(new_viewId)
+name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
+name.Set(part_mark)
+
+#isolate the element
+isolate_elements(List_isolate_ids, new_view_ele)
+
+#create bounding box around element
+bbox = elements_to_isolate[0].get_BoundingBox(None)
+box_max = bbox.Max
+box_min = bbox.Min
+factor = 0.01
+new_box_max = box_max.Add(XYZ(factor,factor,factor))
+new_box_min = box_min.Add(XYZ(-0.01,-0.01,-0.01))
+
+new_bbox = BoundingBoxXYZ()
+new_bbox.Max = new_box_max
+new_bbox.Min = new_box_min
+new_view_ele.SetSectionBox(new_bbox)
 
 
-print(json.dumps(dataListRow,encoding ='utf-8',ensure_ascii=False))
-print("已导出清单：")
+t.Commit()
 
 
+
+print(box_max,box_min)
+print("---------------")
+print(new_box_max,new_box_min)
+print(name)

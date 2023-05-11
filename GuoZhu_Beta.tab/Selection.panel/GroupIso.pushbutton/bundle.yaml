@@ -1,0 +1,9 @@
+title:
+  en_us: "Isolate Group"
+  chinese_s: "创建\n构件3D图"	
+tooltip:
+  en_us: Create single group element 3Dview with bounding box
+  chinese_s: "创建构件三维视图，隔离构件模型组的elements 同时开启隔离框"
+
+
+

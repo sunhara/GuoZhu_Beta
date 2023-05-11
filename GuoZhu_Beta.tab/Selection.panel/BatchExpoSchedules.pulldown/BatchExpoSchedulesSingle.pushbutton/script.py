@@ -47,6 +47,8 @@ for schedule in restOf_ele:
     nRows = table.NumberOfRows
     nColumns = table.NumberOfColumns
 
+    dataListRow.Add([''])
+    dataListRow.Add([''])
     #Collect all of data from the schedule
     
     for row in range(nRows): #Iterate through the rows. The second row is always a blank space

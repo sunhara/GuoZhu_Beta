@@ -2,7 +2,8 @@ title:
   en_us: Selection
   chinese_s: "选择"
 layout:
-  - WIP
+  - ElementIso
+  - GroupIso
   - BatchExpoSchedules
   - -----
   - query

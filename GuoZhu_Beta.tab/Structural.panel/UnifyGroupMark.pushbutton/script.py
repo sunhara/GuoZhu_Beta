@@ -27,16 +27,19 @@ for m in model_groups:
     eles = m.GetMemberIds()
     #get assembly mark
     assembly_mark = m.LookupParameter("工厂加工-构件标号").AsString()
-    assemblies.append(assembly_mark)
-    #apply 
-    for e in eles:       
-        element = doc.GetElement(e)
-        elementMark = element.LookupParameter("工厂加工-构件标号")
-        if elementMark is not None:
-            elementMark.Set(assembly_mark)
-        else:
-            pass
+    if assembly_mark is not None:
 
+        assemblies.append(assembly_mark)
+        #apply 
+        for e in eles:       
+            element = doc.GetElement(e)
+            elementMark = element.LookupParameter("工厂加工-构件标号")
+            if elementMark is not None:
+                elementMark.Set(assembly_mark)
+            else:
+                pass
+    else:
+        pass
 t.Commit()
 
 print(assemblies)

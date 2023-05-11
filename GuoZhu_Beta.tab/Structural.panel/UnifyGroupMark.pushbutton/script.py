@@ -1,58 +1,45 @@
 # -*- coding: utf-8 -*-
 import json	
-import os
 import clr
-import csv 
-import codecs
+
 
 from pyrevit import forms	
 from pyrevit import script
-from operator import itemgetter, attrgetter, methodcaller
-import Autodesk
+
 from Autodesk.Revit.DB import*
 
 
 doc = __revit__.ActiveUIDocument.Document
+
 #Get the selected element
 selection = __revit__.ActiveUIDocument.Selection.GetElementIds()
-element = doc.GetElement(selection[0])
 
-selection2 = __revit__.ActiveUIDocument.Selection.PickObject(Face)
+model_groups = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_IOSModelGroups).WhereElementIsNotElementType().ToElements()
 
-#Revti element convert to Topo faces
-geometry_options = Options()
-geometry_options.ComputeReferences = True
+#STAR THE TRANSACTION!!!
+t = Transaction(doc, 'Isolate Elements')
+t.Start()
 
+# Get all members of the model group
+assemblies = []
 
+for m in model_groups:
+    eles = m.GetMemberIds()
+    #get assembly mark
+    assembly_mark = m.LookupParameter("工厂加工-构件标号").AsString()
+    assemblies.append(assembly_mark)
+    #apply 
+    for e in eles:       
+        element = doc.GetElement(e)
+        elementMark = element.LookupParameter("工厂加工-构件标号")
+        if elementMark is not None:
+            elementMark.Set(assembly_mark)
+        else:
+            pass
 
-face_ref = ElementReferenceType.REFERENCE_TYPE_SURFACE
-face_ref2 = Reference(element)
-geometry3 = element.GetGeometryObjectFromReference(face_ref2)
+t.Commit()
 
-
-
-
-print(geometry3)
-
-solid_options = SolidOptions(ElementId.InvalidElementId, ElementId.InvalidElementId)
-
-
-
-
-# Get the geometry of the element
-
-# Convert the geometry to a solid
-
-
-
-
-
-     
-
-
-
-
+print(assemblies)
+print(':OK_hand:',"DONE!")
 
 #print(json.dumps(dataListRow,encoding ='utf-8',ensure_ascii=False))
-
-

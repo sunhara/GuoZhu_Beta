@@ -1,0 +1,6 @@
+title:
+  en_us: EasyCopy
+  chinese_s: "快速复制"
+layout:
+  - EasyCopy2D
+  - EasyCopy3D

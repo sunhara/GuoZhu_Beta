@@ -11,12 +11,13 @@ from pyrevit import script
 output = script.get_output()
 
 from Autodesk.Revit.DB import*
+from Autodesk.Revit.UI.Selection import ObjectType
 
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
 
 selected_ID = uidoc.Selection.GetElementIds()
-#selected_ELE = doc.GetElement(selected_ID[0])
+
 #Check if the copy element has been selected
 check = len(selected_ID) != 0
 
@@ -25,6 +26,7 @@ if check == True:
     # Get the click points
     pt1 = uidoc.Selection.PickPoint()
     pt2 = uidoc.Selection.PickPoint()
+ 
 
     # Create a vector from the two points
     vector = XYZ(pt2.X - pt1.X, pt2.Y - pt1.Y, pt2.Z - pt1.Z)

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import clr
 import csv 
 
@@ -56,7 +55,6 @@ if source_file is not None:
                 modified_f.append(clean_data)
         
         
-    #List [list](modified_f)
 
     sorted_data = sorted(modified_f, key=lambda data: data[1])
 
@@ -65,14 +63,10 @@ if source_file is not None:
     unique_user = list(set(user_data))
 
 
-
     individual_user_time = []
     for i in unique_user:
         sublist = [x for x in sorted_data if x[1] ==i]
         individual_user_time.append(Extract(sublist,0))
-
-
-
 
 
     #Collecting total time and calculation   

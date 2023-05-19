@@ -4,6 +4,8 @@ title:
 layout:
   - ElementIso
   - GroupIso
+  - Resize
+  - -----
   - BatchExpoSchedules
   - -----
   - query

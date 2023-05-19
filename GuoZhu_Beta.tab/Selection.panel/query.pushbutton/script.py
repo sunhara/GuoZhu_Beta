@@ -1,61 +1,68 @@
 # -*- coding: utf-8 -*-
-
 import clr
+clr.AddReference('System')
+from System.Collections.Generic import List
+
 
 from pyrevit import forms	
-from pyrevit import script
+import Autodesk
 
+from Autodesk.Revit.UI import*
 from Autodesk.Revit.DB import*
-from Autodesk.Revit.UI.Selection import ObjectType
 
-def GetWorkPlane(face):
-
-    # Get the reference face
-    
-    planar_face = doc.GetElement(face).GetGeometryObjectFromReference(face)
-
-    face_normal = planar_face.FaceNormal
-    face_orig = planar_face.Origin
-
-    newPlane = Plane.CreateByNormalAndOrigin(face_normal,face_orig)
-
-    
-    return newPlane
 
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
-view = doc.ActiveView
 
-selected_ID = uidoc.Selection.GetElementIds()
-#selected_ELE = doc.GetElement(selected_ID[0])
-#Check if the copy element has been selected
-check = len(selected_ID) != 0
+active_view = doc.ActiveView
+uiapp = UIApplication(doc.Application)
 
-t = Transaction(doc, 'Copy Elements')
-t.Start()
 
-# Get the first plane of the reference face
-face_ref = uidoc.Selection.PickObject(ObjectType.Face)
+planes = []
+#Current BoundingBox
+bbox = active_view.CropBox
+bbox_max = bbox.Max
+bbox_min = bbox.Min
+#boundariesX 
+planes.append(Plane.CreateByNormalAndOrigin(XYZ.BasisX,bbox_min))
+planes.append(Plane.CreateByNormalAndOrigin(-XYZ.BasisX,bbox_max))
 
-nPlane = GetWorkPlane(face_ref)
-view.SketchPlane = SketchPlane.Create(doc, nPlane)
+#boundariesY 
+planes.append(Plane.CreateByNormalAndOrigin(XYZ.BasisY,bbox_min))
+planes.append(Plane.CreateByNormalAndOrigin(-XYZ.BasisY,bbox_max))
 
-# Create point1
-pt1 = uidoc.Selection.PickPoint()
+#boundariesZ 
+planes.append(Plane.CreateByNormalAndOrigin(XYZ.BasisZ,bbox_min))
+planes.append(Plane.CreateByNormalAndOrigin(-XYZ.BasisZ,bbox_max))
 
-################################################################
+#List[Plane](planes)
 
-# Get the second plane of the reference face
-face_ref = uidoc.Selection.PickObject(ObjectType.Face)
+point_cloud_instances = FilteredElementCollector(doc).OfClass(PointCloudInstance)
+ptCloud = point_cloud_instances.FirstElement()
 
-nPlane = GetWorkPlane(face_ref)
-view.SketchPlane = SketchPlane.Create(doc, nPlane)
-pt2 = uidoc.Selection.PickPoint()
+ptFilter = Autodesk.Revit.DB.PointClouds.PointCloudFilterFactory.CreateMultiPlaneFilter(planes)
 
-# Create a vector from the two points
-vector = XYZ(pt2.X - pt1.X, pt2.Y - pt1.Y, pt2.Z - pt1.Z)
+pts = ptCloud.GetPoints(ptFilter,0.001,20)
 
-t.Commit()
+elements = []
 
-print(nPlane)
-print(vector)
+for point in pts:
+    x = point.X
+    y = point.Y
+    z = point.Z
+    xyz_point = XYZ(x, y, z)
+    print(xyz_point)
+
+
+
+scanName = ptCloud.GetScans()
+sel_Filter = ptCloud.GetSelectionFilter()
+
+print(ptCloud)
+
+print("-"*50)
+print(pts)
+print(pts.Count)
+
+
+print("-"*50)

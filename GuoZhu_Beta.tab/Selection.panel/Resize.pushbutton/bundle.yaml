@@ -1,0 +1,9 @@
+title:
+  en_us: "Shrink BBox"
+  chinese_s: "缩小\n截面框"	
+tooltip:
+  en_us: Resize the bounding box to the group elements
+  chinese_s: "选择模型组，缩小截面框"
+
+
+

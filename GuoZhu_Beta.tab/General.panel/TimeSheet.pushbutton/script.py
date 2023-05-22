@@ -7,6 +7,7 @@ from System.Collections.Generic import List
 
 from pyrevit import forms	
 from pyrevit import script
+output = script.get_output()
 
 from Autodesk.Revit.DB import*
 from datetime import datetime, timedelta
@@ -91,7 +92,7 @@ if source_file is not None:
         timeSec_int.append(hours)
 
 
-    output = script.get_output()
+    
     chart = output.make_pie_chart()
 
     # Set the labels for the circumference axis

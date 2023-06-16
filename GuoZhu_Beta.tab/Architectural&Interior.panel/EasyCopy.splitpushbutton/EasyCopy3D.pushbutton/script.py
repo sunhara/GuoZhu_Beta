@@ -40,41 +40,44 @@ def GetWorkPlane(face):
 #The Main Code
 
 if check == True:
-    t = Transaction(doc, 'Copy Elements')
-    t.Start()
-    # Get the click points
+    try:
+        t = Transaction(doc, 'Copy Elements')
+        t.Start()
+        # Get the click points
 
-    # Get the first plane of the reference face
-    face_ref = uidoc.Selection.PickObject(ObjectType.Face)
+        # Get the first plane of the reference face
+        face_ref = uidoc.Selection.PickObject(ObjectType.Face)
 
-    nPlane = GetWorkPlane(face_ref)
-    view.SketchPlane = SketchPlane.Create(doc, nPlane)
+        nPlane = GetWorkPlane(face_ref)
+        view.SketchPlane = SketchPlane.Create(doc, nPlane)
 
-    # Create point1
-    pt1 = uidoc.Selection.PickPoint()
+        # Create point1
+        pt1 = uidoc.Selection.PickPoint()
 
-    ################################################################
+        ################################################################
 
-    # Get the second plane of the reference face
-    face_ref = uidoc.Selection.PickObject(ObjectType.Face)
+        # Get the second plane of the reference face
+        face_ref = uidoc.Selection.PickObject(ObjectType.Face)
 
-    nPlane = GetWorkPlane(face_ref)
-    view.SketchPlane = SketchPlane.Create(doc, nPlane)
-    pt2 = uidoc.Selection.PickPoint()
-
-
-    # Create a vector from the two points
-    vector = XYZ(pt2.X - pt1.X, pt2.Y - pt1.Y, pt2.Z - pt1.Z)
-   
-    number_as_string = input("复制数量")
-    number_of_copy = int(number_as_string)
-
-    for i in range(1,number_of_copy+1):
-        ElementTransformUtils.CopyElements(doc, selected_ID, i*vector)
+        nPlane = GetWorkPlane(face_ref)
+        view.SketchPlane = SketchPlane.Create(doc, nPlane)
+        pt2 = uidoc.Selection.PickPoint()
 
 
-    t.Commit()
+        # Create a vector from the two points
+        vector = XYZ(pt2.X - pt1.X, pt2.Y - pt1.Y, pt2.Z - pt1.Z)
+    
+        number_as_string = input("复制数量")
+        number_of_copy = int(number_as_string)
 
-    output.close()
+        for i in range(1,number_of_copy+1):
+            ElementTransformUtils.CopyElements(doc, selected_ID, i*vector)
+
+
+        t.Commit()
+
+        output.close_others(all_open_outputs=True)
+    except:
+        script.exit()
 else:
     forms.alert('需要先选择一个模型', exitscript=True)

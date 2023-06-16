@@ -3,6 +3,7 @@ title:
   chinese_s: "建筑/室内"
 layout:
   - WIP
+  - syncLayers
   - EasyCopy
   - -----
   - Materials_Match

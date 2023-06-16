@@ -10,12 +10,8 @@ import Autodesk
 
 from Autodesk.Revit.UI import*
 from Autodesk.Revit.DB import*
-from Autodesk.Revit.ApplicationServices import *
+from Autodesk.Revit.ApplicationServices import*
 
-class ElementToCopy(forms.TemplateListItem):
-    @property
-    def name(self):
-        return self.Name
 
 doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application
@@ -23,70 +19,45 @@ app = __revit__.Application
 active_view = doc.ActiveView
 uiapp = UIApplication(doc.Application)
 
-# Define the source path 
-file_path = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\材料仓库-Adsklib\\Materials Box\\Materials Library.rfa"
-fam_doc = app.OpenDocumentFile(file_path)
-
-#Source materials
-materials = FilteredElementCollector(fam_doc).OfCategory(BuiltInCategory.OST_Materials).WhereElementIsNotElementType()
-matNames = [e.Name for e in materials]
-matIds = [e.Id for e in materials]
-
-#Destination materials
-doc_materials = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Materials).WhereElementIsNotElementType()
-doc_matNames = [e.Name for e in doc_materials]
-doc_matIds = [e.Id for e in doc_materials]
-
-#filtering out the difference
-x = set(doc_matNames)
-y = set(matNames)
-same = list(y.intersection(x))
-
-common_eles = []
-for element in materials:
-    if element.Name in same:
-        common_eles.append(element)
+wall_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Walls)
+roof_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Roofs)
 
 
-options = [ElementToCopy(e) for e in common_eles]
-elesToCopy = forms.SelectFromList.show(options, title = "选择材质同步", width = 500, button_name = "同步", multiselect = True)
-#Script exict point
-if not elesToCopy:
-    fam_doc.Close(False)
-    script.exit()
+catSet = doc.Application.Create.NewCategorySet()
+catSet.Insert(wall_cat)
+catSet.Insert(roof_cat)
 
 
-#Copy Element settings
-ids = [e.Id for e in elesToCopy]
-ids_copy= List[ElementId](ids)
-copyOpts = CopyPasteOptions()
-trans = Transform.Identity
+# Define the shared parameter file path
+shared_para_fp = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\共享参数模板（Shared Parameters）\\Shared Parameters-2023.txt"
+
+# Create a new shared parameter file object
+spFile = doc.Application.OpenSharedParameterFile()
+defGroups = spFile.Groups
+
+groupNames = []
+for dg in defGroups:
+    groupNames.append(dg.Name)
+    if dg.Name == "通用":
+        
+        exterianl_def = [d for d in dg.Definitions]
+
+        for d in exterianl_def:
+            if d.Name == "构造做法":
+
+                with Transaction(doc) as t:    
+                    t.Start("Add Shared Parameters")
+                    #Binding the parameter to category 
+                    newIB = doc.Application.Create.NewInstanceBinding(catSet)
+                    #Binding map insert
+                    doc.ParameterBindings.Insert(d,newIB,BuiltInParameterGroup.PG_TEXT)
+                    t.Commit()
 
 
-#filtering out the materials to delete
-matNamesDel = [e.Name for e in elesToCopy]
-xDel = set(matNamesDel)
-yDel = set(matNames)
-same = list(yDel.intersection(xDel))
 
-dele_eles = []
-for element in doc_materials:
-    if element.Name in same:
-        dele_eles.append(element)
+  
 
-#Delete Element 
-ids_del = [e.Id for e in dele_eles]
-ids_ToDel= List[ElementId](ids_del)
+print(catSet)
 
-res = forms.alert("同步材质会移除当前材质，需要从新赋予材质！",ok = True)
-if res:
-    t = Transaction(doc,"Copy Elements")
-    t.Start()
-
-    doc.Delete(ids_ToDel) 
-
-    ElementTransformUtils.CopyElements(fam_doc,ids_copy,doc,trans,copyOpts)
-
-    t.Commit()
-
-    fam_doc.Close(False)
+print("--"*50)
+print(json.dumps(groupNames,encoding ='utf-8',ensure_ascii=False))

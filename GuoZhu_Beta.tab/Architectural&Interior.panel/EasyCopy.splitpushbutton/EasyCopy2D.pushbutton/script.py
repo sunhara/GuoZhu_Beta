@@ -24,8 +24,15 @@ check = len(selected_ID) != 0
 if check == True:
 
     # Get the click points
-    pt1 = uidoc.Selection.PickPoint()
-    pt2 = uidoc.Selection.PickPoint()
+    try:
+        pt1 = uidoc.Selection.PickPoint()
+    except:
+        script.exit()
+    
+    try:
+        pt2 = uidoc.Selection.PickPoint()
+    except:
+        script.exit()
  
 
     # Create a vector from the two points
@@ -43,6 +50,7 @@ if check == True:
 
     t.Commit()
 
-    output.close()
+    output.close_others(all_open_outputs=True)
+    
 else:
     forms.alert('需要先选择一个模型', exitscript=True)

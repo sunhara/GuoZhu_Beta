@@ -19,13 +19,17 @@ app = __revit__.Application
 active_view = doc.ActiveView
 uiapp = UIApplication(doc.Application)
 
+#Set up the param categories
 wall_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Walls)
 roof_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Roofs)
-
-
+soffit_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_RoofSoffit)
+floor_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Floors)
+#Add category to CatSets
 catSet = doc.Application.Create.NewCategorySet()
 catSet.Insert(wall_cat)
 catSet.Insert(roof_cat)
+catSet.Insert(soffit_cat)
+catSet.Insert(floor_cat)
 
 
 # Define the shared parameter file path
@@ -56,7 +60,6 @@ for dg in defGroups:
 
   
 
-print(catSet)
-
-print("--"*50)
-print(json.dumps(groupNames,encoding ='utf-8',ensure_ascii=False))
+# print(catSet)
+# print("--"*50)
+# print(json.dumps(groupNames,encoding ='utf-8',ensure_ascii=False))

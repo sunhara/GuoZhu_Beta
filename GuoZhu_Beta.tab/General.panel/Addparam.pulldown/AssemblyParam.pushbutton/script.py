@@ -20,10 +20,11 @@ active_view = doc.ActiveView
 uiapp = UIApplication(doc.Application)
 
 #Set up the param categories
-wall_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Walls)
-roof_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Roofs)
-soffit_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_RoofSoffit)
-floor_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Floors)
+wall_cat = Category.GetCategory(doc,BuiltInCategory.OST_Walls)
+roof_cat = Category.GetCategory(doc,BuiltInCategory.OST_Roofs)
+soffit_cat = Category.GetCategory(doc,BuiltInCategory.OST_RoofSoffit)
+floor_cat = Category.GetCategory(doc,BuiltInCategory.OST_Floors)
+
 #Add category to CatSets
 catSet = doc.Application.Create.NewCategorySet()
 catSet.Insert(wall_cat)
@@ -35,7 +36,8 @@ catSet.Insert(floor_cat)
 # Define the shared parameter file path
 shared_para_fp = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\共享参数模板（Shared Parameters）\\Shared Parameters-2023.txt"
 
-# Create a new shared parameter file object
+#Create a new shared parameter file object
+app.SharedParametersFilename = shared_para_fp
 spFile = doc.Application.OpenSharedParameterFile()
 defGroups = spFile.Groups
 

@@ -4,6 +4,7 @@ title:
 layout:
   - WIP
   - syncLayers
+  - MaterialDensity
   - EasyCopy
   - -----
   - Materials_Match

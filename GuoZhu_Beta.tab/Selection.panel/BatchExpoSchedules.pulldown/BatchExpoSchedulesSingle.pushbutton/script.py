@@ -70,8 +70,6 @@ with codecs.open('{}\\合并清单.csv'.format(file_path), mode = 'a', encoding 
         
 
 
-
-
 print(json.dumps(dataListRow,encoding ='utf-8',ensure_ascii=False))
 print("已导出清单：")
 

@@ -4,5 +4,6 @@ title:
 layout:
   - AssemblyParam
   - SinglePartsParam
+  - MaterialDensityParam
 
 

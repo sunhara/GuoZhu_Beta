@@ -37,19 +37,27 @@ allAssemblys = wt+rt+ft+st
 for aa in allAssemblys:
     if aa.GetCompoundStructure() != None:
 
-        
         compound_structure = aa.GetCompoundStructure().GetLayers()
         #Get layers materials
         mat_ids = []
         mat_width = []
         for i in compound_structure:
+            
             mat_ids.append(i.MaterialId)
             mat_width.append(round(i.Width*304.8))
-        # Material's name    
-        mat_name = [doc.GetElement(e).Name for e in mat_ids]
+   
 
+        # Material's name set exception for NoneType error 
+        mat_name = []        
+        for e in mat_ids:
+            try:
+                mat_name.append(doc.GetElement(e).Name)
+            except:
+                mat_name.append("Default")
+
+        # Material's width
         mat_width_str = [str(e) for e in mat_width]
-    
+        
         #Assign text to multiple texts
         all_assembly = []
         for i,j in zip(mat_name,mat_width_str):
@@ -66,9 +74,6 @@ for aa in allAssemblys:
             targetValue.Set(assembly_mulitx)
             t.Commit()
     
-       
-
-
 #print(assembly_mulitx)
 # print("--"*50)
 # print(json.dumps(wall_assembly1,encoding ='utf-8',ensure_ascii=False))

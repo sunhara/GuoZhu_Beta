@@ -1,6 +1,6 @@
 title:
-  en_us: "Assembly Para"
-  chinese_s: "参数查询测试"	
+  en_us: "Layers Para"
+  chinese_s: "构造参数"	
 tooltip:
   en_us: Assembly Parameters
   chinese_s: "添加墙、底板、屋顶封板和屋顶构造参数"

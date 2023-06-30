@@ -4,6 +4,7 @@ title:
 layout:
   - AssemblyParam
   - SinglePartsParam
+  - MainPartsParam
   - MaterialDensityParam
 
 

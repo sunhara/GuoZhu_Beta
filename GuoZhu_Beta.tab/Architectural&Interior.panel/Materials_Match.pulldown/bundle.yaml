@@ -4,5 +4,6 @@ title:
 layout:
   - load_materials
   - sync_materials
+  - purge_materials
 
 

@@ -4,5 +4,5 @@ title:
 layout:
   - BatchExpoSchedulesMulti
   - BatchExpoSchedulesSingle
-
+  - BatchExpoSchedulesOnSheet
 

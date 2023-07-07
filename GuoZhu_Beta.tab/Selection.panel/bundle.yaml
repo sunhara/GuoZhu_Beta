@@ -9,3 +9,5 @@ layout:
   - BatchExpoSchedules
   - -----
   - query
+  - -----
+  - PointCloud

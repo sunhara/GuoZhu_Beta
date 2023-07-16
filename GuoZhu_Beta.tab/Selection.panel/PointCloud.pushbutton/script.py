@@ -26,8 +26,8 @@ uiapp = UIApplication(doc.Application)
 
 #ptCloud = doc.GetElement(uidoc.Selection.GetElementIds()[0])
 
-ptCloud = doc.GetElement(ElementId(579105))
-
+#ptCloud = doc.GetElement(ElementId(579105))
+ptCloud = doc.GetElement(ElementId(582289))
 
 #Create filter
 # Filter will match 1/1 of the overall point cloud

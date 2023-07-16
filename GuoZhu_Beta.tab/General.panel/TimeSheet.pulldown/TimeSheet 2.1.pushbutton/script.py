@@ -12,15 +12,15 @@ output = script.get_output()
 from Autodesk.Revit.DB import*
 from datetime import datetime, timedelta
 
-#Convert to hours
-def ToHour(t):  
-    hours = int(t.total_seconds() / 360)
-    return hours
 
 #Convert to minutes
-def ToHour(t):  
-    hours = int(t.total_seconds() / 60)
+def ToMinute(t):  
+    hours = float(t.total_seconds() / 60)
     return hours
+
+#Calculate timedelta percentage
+def TimePercentage(td1,td2):
+    return td1.total_seconds()/td2.total_seconds()*100
 
 #function for extract index list from a list
 def Extract(lst,i):
@@ -51,7 +51,7 @@ def TotalElap (lst):
 
     return timeCollec
 
-max_hour = timedelta(minutes=10)
+max_hour = timedelta(minutes=1)
 min_hour = timedelta(seconds=1)
 
 # Define the file path
@@ -158,19 +158,30 @@ for i in user_modi_time_str:
 
 outData = []
 for i,j,k,l in zip(unique_user,user_add_time,user_modi_time,user_del_time):
-    outData.append([i,ToHour(j),ToHour(k),ToHour(l)])
+    if ToMinute(j)+ToMinute(k)+ToMinute(l) ==0:
+        pass
+    else:
+        sumtotal = ToMinute(j)+ToMinute(k)+ToMinute(l)
+        outData.append([i,ToMinute(j)/sumtotal*100,ToMinute(k)/sumtotal*100,ToMinute(l)/sumtotal*100])
 
 # sum up different ratio time
 total_add_time = sum(user_add_time, timedelta())
 total_modi_time = sum(user_modi_time, timedelta())
 total_del_time = sum(user_del_time, timedelta())
+
+ttc = total_add_time+total_modi_time+total_del_time
+
 #append to the last row
-outData.append(["合计分类时间",total_add_time,total_modi_time,total_del_time])
+outData.append([])
+outData.append(["整体项目时间占比",TimePercentage(total_add_time,ttc)
+                              ,TimePercentage(total_modi_time,ttc)
+                              ,TimePercentage(total_del_time,ttc)])
 
 
 # formats contains formatting strings for each column
 output.print_table(table_data=outData,
-                   title="BIM实际操作时间",
-                   columns=["人员", "添加时间", "修改时间", "删除时间"],
-                   formats=['', '{} mins', '{} mins', '{} mins']
+                   title="BIM有效操作时间比例",
+                   columns=["人员", "添加占比", "修改占比", "删除占比"],
+                   formats=['', '{} %', '{} %', '{} %'],
+                   last_line_style='color:blue;'
                    )

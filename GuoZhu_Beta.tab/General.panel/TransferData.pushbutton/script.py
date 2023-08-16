@@ -76,7 +76,11 @@ def ConvertPt(pt):
 #json_file_fp = "C:\\Users\\6321011\\Desktop\\JSON.txt"
 json_file_fp = forms.pick_file(file_ext='txt')
 
-f = open(json_file_fp, "r")
+try:
+    f = open(json_file_fp, "r")
+except:
+    forms.alert("需要选择JSON File", exitscript=True)
+
 JSON = f.read()
 json_file = json.loads(JSON)
 
@@ -93,6 +97,7 @@ for i in all_column:
 all_elements.extend(subElements)
 
 #input data to all elements
+exception_keys = []
 for i in all_elements:
     #check if the item is Subelements or not
     if isinstance(i,Autodesk.Revit.DB.Subelement):
@@ -122,9 +127,7 @@ for i in all_elements:
 
             t.Commit()
         except Exception as e:
-            print(e)
-        
-    
+            exception_keys.append(e)
 
     else:
         
@@ -152,4 +155,7 @@ for i in all_elements:
 
             t.Commit()
         except Exception as e:
-            print(e)
+            exception_keys.append(e)
+
+print("Exception Keys")
+print(exception_keys)

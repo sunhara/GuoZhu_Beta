@@ -22,17 +22,18 @@ print('位置' + os.environ['USERPROFILE'] + '\Desktop')
 selection = __revit__.ActiveUIDocument.Selection.GetElementIds()
 
 elements = []
+titles = []
 
 # Loop through the element IDs and get the corresponding Revit element for each ID
 for id in selection:
     element = doc.GetElement(id)
     elements.append(element)
-
+    titles.append(element.Name)
+    
 
 first_ele = elements[0]
 restOf_ele = elements
 restOf_ele.pop(0)
-
 
 export_options = ViewScheduleExportOptions()
 export_options.FieldDelimiter = ","  # set the field delimiter to comma
@@ -69,8 +70,8 @@ with codecs.open('{}\\合并清单.csv'.format(file_path), mode = 'a', encoding 
         writer.writerow(row)
         
 
-
-print(json.dumps(dataListRow,encoding ='utf-8',ensure_ascii=False))
 print("已导出清单：")
+print(json.dumps(titles,encoding ='utf-8',ensure_ascii=False))
+
 
 

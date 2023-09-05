@@ -56,8 +56,10 @@ for aa in allAssemblys:
                 mat_name.append("Default")
 
         # Material's width
-        mat_width_str = [str(e) for e in mat_width]
+        # Formate double to string into 0 decimal
+        mat_width_str = ["{:.0f}".format(e) for e in mat_width]
         
+
         #Assign text to multiple texts
         all_assembly = []
         for i,j in zip(mat_name,mat_width_str):

@@ -1,0 +1,9 @@
+title:
+  en_us: "Details\nCollection"
+  chinese_s: "详图库"
+layout:
+  - load_details
+  - export_detail
+  - export_all_details
+
+

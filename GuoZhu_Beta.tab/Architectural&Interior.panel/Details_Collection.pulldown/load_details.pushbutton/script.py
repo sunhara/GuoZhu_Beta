@@ -1,70 +1,108 @@
 # -*- coding: utf-8 -*-
 import clr
-import json
-
 clr.AddReference('System')
+clr.AddReference("System.Windows.Forms")
+
+
+from System.Windows.Forms import  OpenFileDialog
+
 from System.Collections.Generic import List
-
-from pyrevit import forms,script	
+import json
 import Autodesk
-
-from Autodesk.Revit.UI import*
 from Autodesk.Revit.DB import*
-from Autodesk.Revit.ApplicationServices import *
 
-class ElementToCopy(forms.TemplateListItem):
-    @property
-    def name(self):
-        return self.Name
 
 doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application
+uidoc = __revit__.ActiveUIDocument
 
-active_view = doc.ActiveView
-uiapp = UIApplication(doc.Application)
+#Create new handler to hide and accept duplicate
+class HideAndAcceptDuplicateTypeNamesHandler(IDuplicateTypeNamesHandler):
+
+    def OnDuplicateTypeNamesFound(self, args):
+        # Always use duplicate destination types when asked
+        return DuplicateTypeAction.UseDestinationTypes
+
+
+#selecting elements to copy
+def ElementForCopy(names,details):
+    eles = []
+    for n in names:
+        for dt in details:
+            if n == dt.Name:
+                eles.append(dt)
+
+    return  eles
+
 
 # Define the source path 
-file_path = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\材料仓库-Adsklib\\Materials Box\\Materials Library.rfa"
-fam_doc = app.OpenDocumentFile(file_path)
+file_path = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\2D大样图集\\Details Collection.rvt"
+det_doc = app.OpenDocumentFile(file_path)
 
-#Source materials
-materials = FilteredElementCollector(fam_doc).OfCategory(BuiltInCategory.OST_Materials).WhereElementIsNotElementType()
-matNames = [e.Name for e in materials]
+#Source details
+details = FilteredElementCollector(det_doc).OfClass(ViewDrafting).WhereElementIsNotElementType()
+detNames = [e.Name for e in details]
 
-#Destination materials
-doc_materials = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Materials).WhereElementIsNotElementType()
-doc_matNames = [e.Name for e in doc_materials]
-
-#filtering out the difference
-x = set(doc_matNames)
-y = set(matNames)
-different = list(y.difference(x))
-
-common_eles = []
-for element in materials:
-    if element.Name in different:
-        common_eles.append(element)
+#Destination details
+doc_details = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType()
+doc_detNames = [e.Name for e in doc_details]
 
 
-options = [ElementToCopy(e) for e in common_eles]
-elesToCopy = forms.SelectFromList.show(options, title = "选择材质导入", width = 500, button_name = "导入", multiselect = True)
+#Create openfile dialog for selecting files
+details_names = []
+
+#opendialog setting
+dialog = OpenFileDialog()
+dialog.Filter = "All Files|*.JPG"
+dialog.Multiselect = True
+dialog.InitialDirectory = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\2D大样图集"
+
+if dialog.ShowDialog():
+
+    selectedFiles = dialog.SafeFileNames
+    for i in selectedFiles:
+        details_names.append(i[:-4])
+
+
+elesToCopy = ElementForCopy(details_names,details)
+
+
+
 #Script exict point
 if not elesToCopy:
-    fam_doc.Close(False)
+    det_doc.Close(False)
     script.exit()
 
+#mockView for destination view. and it has to be drafting view
+mockView = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType().ToElements()
+newViewNames = []
 
-#Copy Element settings
-ids = [e.Id for e in elesToCopy]
-ids_copy= List[ElementId](ids)
-copyOpts = CopyPasteOptions()
-trans = Transform.Identity
+#all the views to be copied
 
-t = Transaction(doc,"Copy Elements")
-t.Start()
+for i in elesToCopy:
+    
+    t = Transaction(doc,"Copy drafting view and content Elements")
+    t.Start()
 
-ElementTransformUtils.CopyElements(fam_doc,ids_copy,doc,trans,copyOpts)
 
-t.Commit()
+    #Copy view drafting settings
+    newViewNames.append(i.Name)
+    id =[i.Id]
+    ids_copy= List[ElementId](id)
+    
+    #if the filtered elements has a view element will create a view
+    details_elements = FilteredElementCollector(det_doc,id[0]).ToElementIds()
+    ids_details_elements= List[ElementId](details_elements)
 
-fam_doc.Close(False)
+    copyOpts = CopyPasteOptions()
+    trans = Transform.Identity
+
+    #handler to hide and accept duplicate
+    handler = HideAndAcceptDuplicateTypeNamesHandler()
+    copyOpts.SetDuplicateTypeNamesHandler(handler)
+
+    ElementTransformUtils.CopyElements(i,ids_details_elements,mockView[0],trans,copyOpts)
+
+
+    t.Commit()
+det_doc.Close(False)

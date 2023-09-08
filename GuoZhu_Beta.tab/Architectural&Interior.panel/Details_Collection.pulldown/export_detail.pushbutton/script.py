@@ -22,7 +22,6 @@ for i in details:
     detName = i.Name
     detId = i.Id
 
-
     # Define the image export options
     image_options = ImageExportOptions()
     image_options.ExportRange.VisibleRegionOfCurrentView
@@ -37,6 +36,7 @@ for i in details:
     #Export all images
     uidoc.ActiveView = i
     doc.ExportImage (image_options)
+
 
     #close the view when its done
     uiviews = uidoc.GetOpenUIViews()

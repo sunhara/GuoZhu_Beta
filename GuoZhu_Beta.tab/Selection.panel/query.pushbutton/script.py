@@ -1,17 +1,38 @@
 # -*- coding: utf-8 -*-
 import clr
 clr.AddReference('System')
+
+from Microsoft.Win32 import OpenFileDialog
 from System.Collections.Generic import List
 import json
 import Autodesk
 from Autodesk.Revit.DB import*
 
-from pyrevit import forms	
+from pyrevit import forms
 from pyrevit import script
+
 
 doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application
 uidoc = __revit__.ActiveUIDocument
+
+#Create new handler to hide and accept duplicate
+class HideAndAcceptDuplicateTypeNamesHandler(IDuplicateTypeNamesHandler):
+
+    def OnDuplicateTypeNamesFound(self, args):
+        # Always use duplicate destination types when asked
+        return DuplicateTypeAction.UseDestinationTypes
+
+
+#selecting elements to copy
+def ElementForCopy(names,details):
+    eles = []
+    for n in names:
+        for dt in details:
+            if n == dt.Name:
+                eles.append(dt)
+
+    return  eles
 
 
 # Define the source path 
@@ -26,34 +47,62 @@ detNames = [e.Name for e in details]
 doc_details = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType()
 doc_detNames = [e.Name for e in doc_details]
 
-print()
 
-# for i in details:
-#     detName = i.Name
-#     detId = i.Id
+#Create openfile dialog for selecting files
+details_names = []
+
+#opendialog setting
+dialog = OpenFileDialog()
+dialog.Filter = "All Files|*.JPG"
+dialog.Multiselect = True
+dialog.InitialDirectory = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\2D大样图集"
+
+if dialog.ShowDialog():
+
+    selectedFiles = dialog.SafeFileNames
+    for i in selectedFiles:
+        details_names.append(i[:-4])
 
 
-#     # Define the image export options
-#     image_options = ImageExportOptions()
-#     image_options.ExportRange.VisibleRegionOfCurrentView
+elesToCopy = ElementForCopy(details_names,details)
 
-#     #image_options.ExportRange = expRange
-#     image_options.HLRandWFViewsFileType = ImageFileType.JPEGMedium
 
-#     # image file path
-#     targetPath = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\2D大样图集\\{}.jpg".format(detName)
-#     image_options.FilePath = targetPath
+
+#Script exict point
+if not elesToCopy:
+    det_doc.Close(False)
+    script.exit()
+
+#mockView for destination view. and it has to be drafting view
+mockView = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType().ToElements()
+newViewNames = []
+
+#all the views to be copied
+
+for i in elesToCopy:
     
-#     #Export all images
-#     uidoc.ActiveView = i
-#     doc.ExportImage (image_options)
+    t = Transaction(doc,"Copy drafting view and content Elements")
+    t.Start()
 
-#     #close the view when its done
-#     uiviews = uidoc.GetOpenUIViews()
-#     for i in uiviews:
-#         if i.ViewId == detId:
 
-#             try:
-#                 i.Close()
-#             except:
-#                     forms.alert("需要至少一个打开窗口", exitscript=True)
+    #Copy view drafting settings
+    newViewNames.append(i.Name)
+    id =[i.Id]
+    ids_copy= List[ElementId](id)
+    
+    #if the filtered elements has a view element will create a view
+    details_elements = FilteredElementCollector(det_doc,id[0]).ToElementIds()
+    ids_details_elements= List[ElementId](details_elements)
+
+    copyOpts = CopyPasteOptions()
+    trans = Transform.Identity
+
+    #handler to hide and accept duplicate
+    handler = HideAndAcceptDuplicateTypeNamesHandler()
+    copyOpts.SetDuplicateTypeNamesHandler(handler)
+
+    ElementTransformUtils.CopyElements(i,ids_details_elements,mockView[0],trans,copyOpts)
+
+
+    t.Commit()
+det_doc.Close(False)

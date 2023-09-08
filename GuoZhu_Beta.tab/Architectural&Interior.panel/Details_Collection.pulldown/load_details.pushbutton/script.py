@@ -11,6 +11,7 @@ import json
 import Autodesk
 from Autodesk.Revit.DB import*
 
+from pyrevit import script
 
 doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application

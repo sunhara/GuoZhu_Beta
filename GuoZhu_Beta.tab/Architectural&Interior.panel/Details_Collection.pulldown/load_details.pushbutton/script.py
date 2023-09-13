@@ -75,8 +75,14 @@ if not elesToCopy:
     script.exit()
 
 #mockView for destination view. and it has to be drafting view
-mockView = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType().ToElements()
+mockViews = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType().ToElements()
+mockView = []
 newViewNames = []
+
+for i in mockViews:
+    if i.IsTemplate == False:
+        mockView.append(i)
+
 
 #all the views to be copied
 
@@ -84,6 +90,7 @@ for i in elesToCopy:
     
     t = Transaction(doc,"Copy drafting view and content Elements")
     t.Start()
+
 
 
     #Copy view drafting settings

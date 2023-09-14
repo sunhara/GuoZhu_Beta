@@ -26,7 +26,10 @@ uiapp = UIApplication(doc.Application)
 # Define the source path 
 
 file_path = forms.pick_file(file_ext='rfa')
-fam_doc = app.OpenDocumentFile(file_path)
+try:
+    fam_doc = app.OpenDocumentFile(file_path)
+except:
+    script.exit()
 
 #Source family types
 famTypes = [i for i in fam_doc.FamilyManager.Types]
@@ -40,7 +43,7 @@ if not elesToImport:
     fam_doc.Close(False)
     script.exit()
 
-print(elesToImport)
+
 t = Transaction(doc,"Copy Elements")
 t.Start()
 
@@ -50,3 +53,4 @@ for i in elesToImport:
 t.Commit()
 
 fam_doc.Close(False)
+forms.alert("导入完成", exitscript=True)

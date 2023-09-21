@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import codecs
+import datetime
 
 from pyrevit import forms,script
 
@@ -10,11 +11,17 @@ try:
         prompt='Enter new tag name:',
         title='Tag Manager'
     )
+
+
     if value is None:
         script.excit()
     else:
+        x = datetime.datetime.now()
+        time = x.strftime("%X")
+        messSend = value + "          -" + time
+
         f = codecs.open(mess_log,"w",encoding = "utf-8")
-        f.write(value)
+        f.write(messSend)
         f.close
 except:
     pass

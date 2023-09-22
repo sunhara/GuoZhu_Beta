@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 import clr
+from pyrevit import forms
 
-clr.AddReference('System')
-from System.Collections.Generic import List
-
-from pyrevit import forms,script	
-import Autodesk
 
 from Autodesk.Revit.UI import*
 from Autodesk.Revit.DB import*
@@ -15,8 +11,6 @@ doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application
 uidoc =__revit__.ActiveUIDocument
 
-active_view = doc.ActiveView
-uiapp = UIApplication(doc.Application)
 
 #Getting the mass of the element
 def GetMatMass(ele):

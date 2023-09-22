@@ -3,6 +3,7 @@ title:
   chinese_s: "查询\n参数"
 layout:
   - StructureMass
+  - GeneralMass
 
 
 

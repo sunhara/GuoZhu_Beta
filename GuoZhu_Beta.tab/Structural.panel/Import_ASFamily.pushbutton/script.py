@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import clr
-import json
 
 clr.AddReference('System')
-from System.Collections.Generic import List
+clr.AddReference("System.Windows.Forms")
+
+
+from System.Windows.Forms import  OpenFileDialog
 
 from pyrevit import forms,script	
 import Autodesk
@@ -11,6 +13,12 @@ import Autodesk
 from Autodesk.Revit.UI import*
 from Autodesk.Revit.DB import*
 from Autodesk.Revit.ApplicationServices import *
+
+#opendialog setting
+dialog = OpenFileDialog()
+dialog.Filter = "All Files|*.rfa"
+dialog.Multiselect = False
+dialog.InitialDirectory = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\库-Family\\结构部件-Family\\Collaborate AS-Family"
 
 class ElementToCopy(forms.TemplateListItem):
     @property
@@ -24,8 +32,10 @@ active_view = doc.ActiveView
 uiapp = UIApplication(doc.Application)
 
 # Define the source path 
+dialog.ShowDialog()
+file_path = dialog.FileName
 
-file_path = forms.pick_file(file_ext='rfa')
+
 try:
     fam_doc = app.OpenDocumentFile(file_path)
 except:

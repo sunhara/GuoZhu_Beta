@@ -76,6 +76,7 @@ if not elesToCopy:
 
 #mockView for destination view. and it has to be drafting view
 mockViews = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType().ToElements()
+
 mockView = []
 newViewNames = []
 

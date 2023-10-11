@@ -3,6 +3,7 @@ title:
   chinese_s: "详图库"
 layout:
   - load_details
+  - load_legend
   - export_detail
   - export_all_details
 

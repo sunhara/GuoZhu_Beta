@@ -41,7 +41,7 @@ def TotalElap (lst):
 
     return timeCollec
 
-max_hour = timedelta(minutes=1)
+max_hour = timedelta(seconds=20)
 min_hour = timedelta(seconds=1)
 
 # Define the file path

@@ -37,7 +37,6 @@ allFamily = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Generic
 options = [ElementToCopy(e) for e in allFamily]
 famSymbol = forms.SelectFromList.show(options, title = "选择材质导入", width = 500, button_name = "导入", multiselect = True)
 
-print(famSymbol)
 
 #Check if the copy elements has been selected
 if famSymbol != None:

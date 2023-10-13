@@ -1,0 +1,9 @@
+title:
+  en_us: "Place Void"
+  chinese_s: "放置\n虚体"	
+tooltip:
+  en_us: Place voids at selecting elements
+  chinese_s: "放置虚体，重合于选择物体的位置。先选择要重合的物体"
+
+
+

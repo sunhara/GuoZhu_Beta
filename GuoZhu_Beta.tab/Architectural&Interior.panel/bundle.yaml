@@ -6,6 +6,7 @@ layout:
   - syncLayers
   - MaterialDensity
   - EasyCopy
+  - PlaceVoids
   - -----
   - Materials_Match
   - Details_Collection

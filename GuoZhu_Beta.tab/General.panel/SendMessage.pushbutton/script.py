@@ -8,8 +8,8 @@ mess_log = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享�
 try:
     value = forms.ask_for_string(
         
-        prompt='Enter new tag name:',
-        title='Tag Manager'
+        prompt='Send Gloabl Message:',
+        title='Send Manager'
     )
 
 

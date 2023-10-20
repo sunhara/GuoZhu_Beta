@@ -1,0 +1,10 @@
+title:
+  en_us: "Time Sheets!2.2"
+  chinese_s: "时间表2.2"	
+tooltip:
+  en_us: Using model history file evaluate all user's daily modeling time
+  chinese_s: "查询模型整体日常工作时间（真实时间）"
+
+
+context: zero-doc
+author: SGao

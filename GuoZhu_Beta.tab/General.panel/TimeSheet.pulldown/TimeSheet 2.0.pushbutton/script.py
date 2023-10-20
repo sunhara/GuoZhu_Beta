@@ -41,7 +41,7 @@ def TotalElap (lst):
 
     return timeCollec
 
-max_hour = timedelta(seconds=20)
+max_hour = timedelta(seconds=30)
 min_hour = timedelta(seconds=1)
 
 # Define the file path
@@ -93,10 +93,12 @@ if source_file is not None:
 
     for i in individual_user_time_str:
         time_obj =ConvertDate(i)
+        time_obj.sort
         timeCollec = TotalElap(time_obj)
         total_time = sum(timeCollec, timedelta())
         individual_user_time.append(total_time)
         
+
 
     for i,j in zip(unique_user,individual_user_time):
         txt = "{}  建模时间:  {}"

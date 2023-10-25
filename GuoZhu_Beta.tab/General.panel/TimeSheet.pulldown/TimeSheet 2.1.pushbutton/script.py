@@ -58,6 +58,11 @@ min_hour = timedelta(seconds=1)
 #source_file = "C:\\Users\\6321011\Desktop\\2301-锡小行政楼_结构_worklog.txt"
 source_file = forms.pick_file(file_ext='txt')
 
+if source_file == None:
+    script.exit()
+else:
+    pass
+
 
 #Modified the csv data list
 modified_f = []

@@ -19,10 +19,10 @@ def SubCompon(famIns):
 
     subCompIds = famIns.GetSubComponentIds()
 
-    if len(subCompIds) == 0:
-        
+    if len(subCompIds) == 0:  
         all_selected_elements.append(famIns)
     else:
+        all_selected_elements.append(famIns)
         for i in subCompIds:
             all_selected_elements.append(doc.GetElement(i))
 
@@ -66,6 +66,7 @@ for i in model_selected:
         
 
 uniqueElements = list(set([i.Id for i in all_selected_elements]))
+
 
 [CalculateMass(doc.GetElement(e)) for e in uniqueElements]
 forms.alert('所选钢结构物体总质量：{} kg'.format(totalweight), exitscript=True)    

@@ -27,51 +27,61 @@ def isolate_elements(elements, view):
     view.HideElements(List[ElementId](hide_elem_ids))
 
 
+#input view name
+value = forms.ask_for_string(
+        
+        prompt='输入视图名称:',
+        title='View Title Input'
+    )
 
-groupEle_to_isolate = [doc.GetElement(e_id) 
-        for e_id in uidoc.Selection.GetElementIds()]
+try:
 
-part_mark = groupEle_to_isolate[0].LookupParameter("工厂加工-构件标号").AsString()
+    groupEle_to_isolate = [doc.GetElement(e_id) for e_id in uidoc.Selection.GetElementIds()]
 
-if part_mark is not None:
+    part_mark = groupEle_to_isolate[0].LookupParameter("工厂加工-构件标号").AsString()
 
-    #STAR THE TRANSACTION!!!
-    t = Transaction(doc, 'Isolate Elements')
-    t.Start()
+    if part_mark is not None:
 
-    # Get all members of the model group
-    members = groupEle_to_isolate[0].GetMemberIds()
+        #STAR THE TRANSACTION!!!
+        t = Transaction(doc, 'Isolate Elements')
+        t.Start()
 
-
-    #Created new view with name
-    new_viewId = active_view.Duplicate(ViewDuplicateOption.Duplicate)
-    new_view_ele = doc.GetElement(new_viewId)
-    name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
-    name.Set(part_mark)
-
-    #isolate the element
-    isolate_elements(members, new_view_ele)
+        # Get all members of the model group
+        members = groupEle_to_isolate[0].GetMemberIds()
 
 
-    #create bounding box and offset around element
-    bbox = groupEle_to_isolate[0].get_BoundingBox(None)
-    box_max = bbox.Max
-    box_min = bbox.Min
-    factor = 0.01
-    new_box_max = box_max.Add(XYZ(factor,factor,factor))
-    new_box_min = box_min.Add(XYZ(-factor,-factor,-factor))
+        #Created new view with name
+        new_viewId = active_view.Duplicate(ViewDuplicateOption.Duplicate)
+        new_view_ele = doc.GetElement(new_viewId)
+        name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
 
-    new_bbox = BoundingBoxXYZ()
-    new_bbox.Max = new_box_max
-    new_bbox.Min = new_box_min
-    new_view_ele.SetSectionBox(new_bbox)
+        if value is None:
 
-    t.Commit()
-
-else :
-    forms.alert('工厂加工-零件标号不能为空值', exitscript=True)
+            name.Set(part_mark)
+        else:
+            name.Set(value)
 
 
-print("生成3D视图")
-print("---------------")
-print(part_mark)
+        #isolate the element
+        isolate_elements(members, new_view_ele)
+
+
+        #create bounding box and offset around element
+        bbox = groupEle_to_isolate[0].get_BoundingBox(None)
+        box_max = bbox.Max
+        box_min = bbox.Min
+        factor = 0.01
+        new_box_max = box_max.Add(XYZ(factor,factor,factor))
+        new_box_min = box_min.Add(XYZ(-factor,-factor,-factor))
+
+        new_bbox = BoundingBoxXYZ()
+        new_bbox.Max = new_box_max
+        new_bbox.Min = new_box_min
+        new_view_ele.SetSectionBox(new_bbox)
+
+        t.Commit()
+
+    else :
+        forms.alert('工厂加工-零件标号不能为空值', exitscript=True)
+except:
+    forms.alert('未选择模型物体', exitscript=True)

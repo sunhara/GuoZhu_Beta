@@ -27,51 +27,66 @@ def isolate_elements(elements, view):
     view.HideElements(List[ElementId](hide_elem_ids))
 
 
-
-elements_to_isolate = [doc.GetElement(e_id) 
-        for e_id in uidoc.Selection.GetElementIds()]
-
-part_mark = elements_to_isolate[0].LookupParameter("工厂加工-零件标号").AsString()
-
-if part_mark is not None:
-
-    #STAR THE TRANSACTION!!!
-    t = Transaction(doc, 'Isolate Elements')
-    t.Start()
-
-    List_isolate_ids = uidoc.Selection.GetElementIds()
-
-    #Created new view with name
-    new_viewId = active_view.Duplicate(ViewDuplicateOption.Duplicate)
-    new_view_ele = doc.GetElement(new_viewId)
-    name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
-    name.Set(part_mark)
-
-    #isolate the element
-    isolate_elements(List_isolate_ids, new_view_ele)
-
-    #create bounding box and offset around element
-    bbox = elements_to_isolate[0].get_BoundingBox(None)
-    box_max = bbox.Max
-    box_min = bbox.Min
-    factor = 0.01
-    new_box_max = box_max.Add(XYZ(factor,factor,factor))
-    new_box_min = box_min.Add(XYZ(-factor,-factor,-factor))
-
-    new_bbox = BoundingBoxXYZ()
-    new_bbox.Max = new_box_max
-    new_bbox.Min = new_box_min
-    new_view_ele.SetSectionBox(new_bbox)
-
-    t.Commit()
-
-else :
-    forms.alert('工厂加工-零件标号不能为空值', exitscript=True)
+#input view name
+value = forms.ask_for_string(
+        
+        prompt='输入视图名称:',
+        title='View Title Input'
+    )
 
 
+try:
 
+    elements_to_isolate = [doc.GetElement(e_id) 
+            for e_id in uidoc.Selection.GetElementIds()]
 
+    part_mark = elements_to_isolate[0].LookupParameter("工厂加工-零件标号").AsString()
 
-print("生成3D视图")
-print("---------------")
-print(part_mark)
+    if part_mark is not None and len(part_mark) != 0:
+
+        #STAR THE TRANSACTION!!!
+        t = Transaction(doc, 'Isolate Elements')
+        t.Start()
+
+        List_isolate_ids = uidoc.Selection.GetElementIds()
+
+        #Created new view with name
+        new_viewId = active_view.Duplicate(ViewDuplicateOption.Duplicate)
+        new_view_ele = doc.GetElement(new_viewId)
+        name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
+
+        #Name for the View default or input
+        if value is None:
+
+            name.Set(part_mark)
+        else:
+            name.Set(value)
+        
+        #isolate the element
+        isolate_elements(List_isolate_ids, new_view_ele)
+
+        #create bounding box and offset around element
+        bbox = elements_to_isolate[0].get_BoundingBox(None)
+        box_max = bbox.Max
+        box_min = bbox.Min
+        factor = 0.01
+        new_box_max = box_max.Add(XYZ(factor,factor,factor))
+        new_box_min = box_min.Add(XYZ(-factor,-factor,-factor))
+
+        new_bbox = BoundingBoxXYZ()
+        new_bbox.Max = new_box_max
+        new_bbox.Min = new_box_min
+        new_view_ele.SetSectionBox(new_bbox)
+
+        t.Commit()
+
+    else :
+        forms.alert('工厂加工-零件标号不能为空值', exitscript=True)
+
+except:
+
+    if elements_to_isolate == []:
+
+        forms.alert('未选择模型物体', exitscript=True)
+    else:
+        pass

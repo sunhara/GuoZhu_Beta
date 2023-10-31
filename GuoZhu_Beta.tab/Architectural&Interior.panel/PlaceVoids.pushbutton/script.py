@@ -5,9 +5,10 @@ clr.AddReference("System.Windows.Forms")
 
 import sys
 
-from System.Windows.Forms import  OpenFileDialog
 from System.Collections.Generic import List
 from Autodesk.Revit.DB import*
+from Autodesk.Revit.UI.Selection import ObjectType
+
 
 from pyrevit import script,forms
 
@@ -22,7 +23,7 @@ doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
 
 selected_ID = uidoc.Selection.GetElementIds()
-
+selected_HostFace = uidoc.Selection.PickObject(ObjectType.Face,"选择host面")
 
 #Check if the initial elements has been selected
 if len(selected_ID) != 0:
@@ -53,8 +54,6 @@ for i in selected_ID:
 
     location = element.Location
 
-    hostface = element.HostFace
-
     startXYZ = element.Location.Point
 
     endXYZ = element.FacingOrientation
@@ -62,7 +61,8 @@ for i in selected_ID:
     t = Transaction(doc,"Start a new Transaction")
     t.Start()
 
-    doc.Create.NewFamilyInstance(hostface,startXYZ,endXYZ,famSymbol[0])
+    newVoids = doc.Create.NewFamilyInstance(selected_HostFace,startXYZ,endXYZ,famSymbol[0])
+
      
     # doc.Create.NewFamilyInstance.Overloads[Reference, XYZ, XYZ, FamilySymbol](hostface,startXYZ,endXYZ,famSymbol[0])
      

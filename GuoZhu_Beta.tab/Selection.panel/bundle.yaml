@@ -9,5 +9,6 @@ layout:
   - BatchExpoSchedules
   - -----
   - query
+  - query_CPython
   - -----
   - PointCloud

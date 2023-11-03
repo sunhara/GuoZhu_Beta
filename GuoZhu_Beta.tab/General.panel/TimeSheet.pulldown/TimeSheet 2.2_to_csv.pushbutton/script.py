@@ -130,7 +130,7 @@ try:
 
     newdf.to_csv("{}\\{}-时间表.csv".format(file_path,file_name),encoding='utf-8-sig')
     
-    print(newdf)
+    # print(newdf)
     #print(tabulate(newdf,headers = "keys",tablefmt = "github",maxcolwidths=[None, 50]))
 except:
     pass

@@ -72,6 +72,3 @@ with codecs.open('{}\\合并清单.csv'.format(file_path), mode = 'a', encoding 
 
 print("已导出清单：")
 print(json.dumps(titles,encoding ='utf-8',ensure_ascii=False))
-
-
-

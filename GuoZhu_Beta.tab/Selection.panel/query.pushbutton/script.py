@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import clr
 
+import json
+
 clr.AddReference('System')
 from System.Collections.Generic import List
-
 
 
 import Autodesk
@@ -15,9 +16,15 @@ doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application
 
 # Creating collector instance and collecting all the stiffeners from the model
-importIns = FilteredElementCollector(doc).OfClass(ImportInstance).ToElements()
+collector1 = FilteredElementCollector(doc).WhereElementIsNotElementType().OfClass(SharedParameterElement)
 
 
-output = script.get_output()
 
-print([i.Category.Name for i in importIns])
+for elem in collector1:
+    
+    param_def = elem.GetDefinition()
+    uID = elem.UniqueId
+    print("{} - {}".format(elem.Name,uID))
+    
+
+    # print(json.dumps(elem.Name,encoding ='utf-8',ensure_ascii=False))

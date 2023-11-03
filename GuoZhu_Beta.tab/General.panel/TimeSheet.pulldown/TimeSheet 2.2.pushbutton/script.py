@@ -134,7 +134,7 @@ if source_file is not None:
 
     unique_user.insert(0,"Date")
 
-
+    # print(user_date_time)
     output.print_table(table_data=user_date_time,
                    title="Daily Time",
                    columns=unique_user,

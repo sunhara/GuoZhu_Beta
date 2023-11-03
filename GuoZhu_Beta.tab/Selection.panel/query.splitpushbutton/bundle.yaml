@@ -1,0 +1,6 @@
+title:
+  en_us: "Query"
+  chinese_s: "参数查询测试"
+layout:
+  - query
+  - purgeImpCAD

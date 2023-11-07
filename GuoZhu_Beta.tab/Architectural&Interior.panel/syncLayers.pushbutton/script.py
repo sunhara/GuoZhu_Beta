@@ -26,13 +26,16 @@ roofTypes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Roofs).
 floorTypes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Floors).WhereElementIsElementType()
 #All Soffits
 soffitTypes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_RoofSoffit).WhereElementIsElementType()
+#All Ceiling
+ceilingTypes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Ceilings).WhereElementIsElementType()
 
 #Turn into python lists
 wt = [e for e in wallTypes]
 rt = [e for e in roofTypes]
 ft = [e for e in floorTypes]
 st = [e for e in soffitTypes]
-allAssemblys = wt+rt+ft+st
+ct = [e for e in ceilingTypes]
+allAssemblys = wt+rt+ft+st+ct
 
 for aa in allAssemblys:
     if aa.GetCompoundStructure() != None:

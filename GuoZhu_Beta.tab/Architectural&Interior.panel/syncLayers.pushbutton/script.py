@@ -47,8 +47,8 @@ for aa in allAssemblys:
         for i in compound_structure:
             
             mat_ids.append(i.MaterialId)
-            mat_width.append(round(i.Width*304.8))
-   
+            mat_width.append(round(i.Width*304.8,1))
+            
 
         # Material's name set exception for NoneType error 
         mat_name = []        
@@ -59,8 +59,8 @@ for aa in allAssemblys:
                 mat_name.append("Default")
 
         # Material's width
-        # Formate double to string into 0 decimal
-        mat_width_str = ["{:.0f}".format(e) for e in mat_width]
+        # Formate double to string into 1 decimal
+        mat_width_str = ["{:.1f}".format(e) for e in mat_width]
         
 
         #Assign text to multiple texts

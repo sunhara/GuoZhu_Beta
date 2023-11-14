@@ -5,8 +5,7 @@ import csv
 import codecs
 
 
-from pyrevit import forms	
-from pyrevit import script
+from pyrevit import forms, script
 
 import Autodesk
 from Autodesk.Revit.DB import*
@@ -15,8 +14,6 @@ doc = __revit__.ActiveUIDocument.Document
 
 # Define the file path
 file_path = os.environ['USERPROFILE'] + '\Desktop'
-
-print('位置' + os.environ['USERPROFILE'] + '\Desktop')
 
 
 selection = __revit__.ActiveUIDocument.Selection.GetElementIds()
@@ -52,16 +49,21 @@ for schedule in elements:
             else:
                 mat_dict[matName] = area
 
-
-
 #print(json.dumps(mat_dict,encoding ='utf-8',ensure_ascii=False))
     
+try:
+    titleName = forms.ask_for_string(default='材质面积总清单',prompt='清单命名:',title='清单命名')
 
-    
+    if titleName == None:
+        script.exit()
+except:
+    script.exit()
+
+
 field_names = ["材质", "面积㎡"] 
   
 # In Python2.x use codecs for encoding & utf -8-sig for utf 8 with bom
-with codecs.open('{}\\材质面积总清单.csv'.format(file_path), mode = 'w', encoding ="utf-8-sig") as file:
+with codecs.open('{}\\{}.csv'.format(file_path,titleName), mode = 'w', encoding ="utf-8-sig") as file:
 
     file.write("材质, 面积㎡\n")
     for key in mat_dict.keys():
@@ -69,5 +71,6 @@ with codecs.open('{}\\材质面积总清单.csv'.format(file_path), mode = 'w', 
             file.write("%s, %s\n" % (key, mat_dict[key]))
         
 
-print("已导出清单：")
+print("已导出清单：{}".format(titleName))
+print('位置' + os.environ['USERPROFILE'] + '\Desktop')
 #print(json.dumps(titles,encoding ='utf-8',ensure_ascii=False))

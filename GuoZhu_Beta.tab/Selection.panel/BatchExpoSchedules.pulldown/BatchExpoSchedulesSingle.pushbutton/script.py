@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json	
 import os
-import clr
 import csv 
 import codecs
 
@@ -28,21 +27,11 @@ titles = []
 for id in selection:
     element = doc.GetElement(id)
     elements.append(element)
-    titles.append(element.Name)
-    
-
-first_ele = elements[0]
-restOf_ele = elements
-restOf_ele.pop(0)
-
-export_options = ViewScheduleExportOptions()
-export_options.FieldDelimiter = ","  # set the field delimiter to comma
-export_options.Title = True
-    
-first_ele.Export(file_path, "合并清单.csv", export_options)
+    titles.append(element.Name) 
 
 dataListRow = []
-for schedule in restOf_ele:
+
+for schedule in elements:
     
     table = schedule.GetTableData().GetSectionData(SectionType.Body)
     nRows = table.NumberOfRows
@@ -61,8 +50,8 @@ for schedule in restOf_ele:
 
 
 
-# In Python2.x use codecs for encoding
-with codecs.open('{}\\合并清单.csv'.format(file_path), mode = 'a', encoding ="utf-8") as file:
+# In Python2.x use codecs for encoding & utf -8-sig for utf 8 with bom
+with codecs.open('{}\\合并清单.csv'.format(file_path), mode = 'w', encoding ="utf-8-sig") as file:
     writer = csv.writer(file, delimiter=",")
     
     for row in dataListRow:

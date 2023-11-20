@@ -24,6 +24,7 @@ wall_cat = Category.GetCategory(doc,BuiltInCategory.OST_Walls)
 roof_cat = Category.GetCategory(doc,BuiltInCategory.OST_Roofs)
 soffit_cat = Category.GetCategory(doc,BuiltInCategory.OST_RoofSoffit)
 floor_cat = Category.GetCategory(doc,BuiltInCategory.OST_Floors)
+ceiling_cat = Category.GetCategory(doc,BuiltInCategory.OST_Ceilings)
 
 #Add category to CatSets
 catSet = doc.Application.Create.NewCategorySet()
@@ -31,7 +32,7 @@ catSet.Insert(wall_cat)
 catSet.Insert(roof_cat)
 catSet.Insert(soffit_cat)
 catSet.Insert(floor_cat)
-
+catSet.Insert(ceiling_cat)
 
 # Define the shared parameter file path
 shared_para_fp = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\共享参数模板（Shared Parameters）\\Shared Parameters-2023.txt"

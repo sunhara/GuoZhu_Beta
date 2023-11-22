@@ -1,0 +1,9 @@
+title:
+  en_us: "AssignTo"
+  chinese_s: "组合标记"	
+tooltip:
+  en_us: Assign multiple model group to one Main Parts
+  chinese_s: "组合标记不同模型组，成为同一个构件"
+
+
+

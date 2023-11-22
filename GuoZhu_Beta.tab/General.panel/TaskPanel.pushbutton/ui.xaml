@@ -1,3 +1,106 @@
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:av="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        mc:Ignorable="av" Title="任务板" Height="400" Width="700" >
+    
+    <Window.Resources>
+        <DataTemplate x:Key="CheckBoxTemplate">
+            <StackPanel Orientation="Horizontal" >
+                <CheckBox Content="{Binding Context}" IsChecked="{Binding IsChecked}" FontSize="14" VerticalAlignment="Center" Background= "{Binding Pl}">
+                    <CheckBox.LayoutTransform>
+                        <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+                    </CheckBox.LayoutTransform>
+                </CheckBox>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Name="top" Height="0.2*"/>
+            <RowDefinition Name="mid"/>
+            <RowDefinition Name="bot" Height="0.3*"/>
+            <RowDefinition Name="action" Height="0.2*"/>
+        </Grid.RowDefinitions>
+
+        <!--Content Pane-->
+        
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Text="优先等级/Pirority" VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="0"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="内容/Context" VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="0"/>
+            <TextBox Grid.Row="0" Grid.Column="2" Text="分配给/Assign To" VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="0"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <TextBlock HorizontalAlignment="Center">任务内容 </TextBlock>
+            
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="25">
+
+                <ItemsControl x:Name="ListBox1" ItemTemplate="{StaticResource CheckBoxTemplate}"/>
+
+            </ScrollViewer>
+        </Grid>
+
+            <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="0.3*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ComboBox Grid.Row="0" Grid.Column="0" Width="80" Height="25" x:Name="pirority">
+
+                <ComboBoxItem IsSelected="True">
+                    <Grid Width="50" Height="20" Background="Red" Name="高">
+                        <TextBlock Text="高"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </ComboBoxItem>
+                <ComboBoxItem >
+                    <Grid Width="50" Height="20" Background="Orange" Name="中">
+                        <TextBlock Text="中"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <Grid Width="50" Height="20" Background="YellowGreen" Name="低">
+                        <TextBlock Text="低"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </ComboBoxItem>
+            </ComboBox>
+            
+            <TextBox  Grid.Row ="0" Grid.Column="1" Height="25" x:Name="context" Text="InPut Context"/>
+
+
+            <ComboBox Grid.Row="0" Grid.Column="2" Width="80" Height="25" x:Name="assignTo" SelectedIndex="0">
+            </ComboBox>
+
+        </Grid>
+        
+        <!--Button Panel-->
+        
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="优先级/Pirority" VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="0"/>
+            <Button Grid.Row="0" Grid.Column="0" Width="100" Height="30" Name="Post" Click="post">
+                <TextBlock Text="发布/Post"/>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="1" Width="100" Height="30" Name="Complete" Click="complete">
+                <TextBlock Text="完成/Complete"/>
+            </Button>
+        </Grid>
+
+
+
+    </Grid>
+
+
 </Window>

@@ -106,23 +106,6 @@ for name,level in zip(modified_f,piror_level):
 newlistViewData = sorted(listViewData,key =lambda x: x.index)
 
 
-class ViewModelBase(INotifyPropertyChanged):
-    def __init__(self):
-        self.propertyChangedHandlers = []
-
-
-    def RaisePropertyChanged(self, propertyName):
-        args = PropertyChangedEventArgs(propertyName)
-        for handler in self.propertyChangedHandlers:
-            handler(self, args)
-            
-    def add_PropertyChanged(self, handler):
-        self.propertyChangedHandlers.append(handler)
-        
-    def remove_PropertyChanged(self, handler):
-        self.propertyChangedHandlers.remove(handler)
-
-
 class MyWindow(Windows.Window):
     
 
@@ -146,7 +129,7 @@ class MyWindow(Windows.Window):
         f.write("{}:   {} - {}\n".format(piror_level,inPutContext,user))
         f.close
         self.Close()
-
+        
 
     #Complete button
     def complete(self,sender,args):

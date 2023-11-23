@@ -1,35 +1,49 @@
 # -*- coding: utf-8 -*-
-
 import sys
 import clr
-import uuid
+
+clr.AddReference("System.Windows.Forms")
+clr.AddReference("IronPython.Wpf")
+clr.AddReference("PresentationFramework")
+clr.AddReference("PresentationCore")
+clr.AddReference("PresentationFramework")
+clr.AddReference("PresentationCore")
+
+from System.IO import File
+from System.Windows.Markup import XamlReader
+
+import wpf
+from System import Windows
 
 
+from System.Windows import Application
+from System.Windows.Media import Brushes
+
+from System.ComponentModel import INotifyPropertyChanged
+from System.ComponentModel import PropertyChangedEventArgs
+
+#find the path of ui XAML
 from pyrevit import forms,script
-
-output = script.get_output()
 
 from Autodesk.Revit.DB import*
 
-
 doc = __revit__.ActiveUIDocument.Document
-uidoc = __revit__.ActiveUIDocument
 
-selected_IDs = uidoc.Selection.GetElementIds()
-GUID = uuid.uuid4()
+# xmal_file = script.get_bundle_file("ui.xaml")
+xmal_file = "C:\\Users\\6321011\\Desktop\\firstWPFApp\\WpfApp2\\WpfApp2\\MainWindow.xaml"
 
-#Check if the element has been selected
-check = len(selected_IDs) == 0
-if check:
-    sys.exit()
 
-t = Transaction(doc, 'Assign Marks')
-t.Start()
+class ViewModelBase(INotifyPropertyChanged):
+    def __init__(self):
+        self.propertyChangedHandlers = []
 
-for i in selected_IDs:
-    ele = doc.GetElement(i)
-    target = ele.LookupParameter("工厂加工-组装标号")
-    target.Set(str(GUID))
-  
-
-t.Commit()
+    def RaisePropertyChanged(self, propertyName):
+        args = PropertyChangedEventArgs(propertyName)
+        for handler in self.propertyChangedHandlers:
+            handler(self, args)
+            
+    def add_PropertyChanged(self, handler):
+        self.propertyChangedHandlers.append(handler)
+        
+    def remove_PropertyChanged(self, handler):
+        self.propertyChangedHandlers.remove(handler)

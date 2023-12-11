@@ -40,6 +40,8 @@ for m in model_groups:
                 pass
     else:
         pass
+
+
 t.Commit()
 
 print(assemblies)

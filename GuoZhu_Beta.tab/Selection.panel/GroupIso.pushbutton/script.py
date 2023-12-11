@@ -47,15 +47,22 @@ try:
         t.Start()
 
         # Get all members of the model group
-        members = groupEle_to_isolate[0].GetMemberIds()
+        members = []
+        for i in groupEle_to_isolate:
+            subList = i.GetMemberIds()
+            for subi in subList:
+                members.append(subi)
 
+
+        # casting list to IcCollection
+        iCcollection = List[ElementId](members)
 
         #Created new view with name
         new_viewId = active_view.Duplicate(ViewDuplicateOption.Duplicate)
         new_view_ele = doc.GetElement(new_viewId)
         name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
 
-        if value is None:
+        if  len(value)==0:
 
             name.Set(part_mark)
         else:
@@ -63,7 +70,7 @@ try:
 
 
         #isolate the element
-        isolate_elements(members, new_view_ele)
+        isolate_elements(iCcollection, new_view_ele)
 
 
         #create bounding box and offset around element

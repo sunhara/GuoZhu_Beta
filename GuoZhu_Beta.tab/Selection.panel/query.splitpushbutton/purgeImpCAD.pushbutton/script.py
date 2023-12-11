@@ -22,10 +22,13 @@ for e in collector:
 
     print(e.Category.Name)
     print("链接--{}".format(e.IsLinked))
-    viewname = doc.GetElement(e.OwnerViewId).Name
-    print(viewname)
+    try:
+        viewname = doc.GetElement(e.OwnerViewId).Name
+        print(viewname)
 
-    
+    except:
+        pass
+
 
 # print(json.dumps(elem.Name,encoding ='utf-8',ensure_ascii=False))
 t = Transaction(doc, "purge")
@@ -39,3 +42,13 @@ for e in collector:
 
 
 t.Commit()
+
+elements = FilteredElementCollector(doc).WhereElementIsNotElementType().ToElementIds()
+
+ele = [doc.GetElement(e_id) for e_id in uidoc.Selection.GetElementIds()]
+type = [i.Name for i in ele]
+
+uniqueList = list(set(type))
+print(len(uniqueList))
+
+print(len(elements))

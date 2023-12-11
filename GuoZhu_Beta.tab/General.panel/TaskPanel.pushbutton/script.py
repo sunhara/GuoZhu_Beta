@@ -35,7 +35,7 @@ for i in all_3d_view:
     user_names.append(user)
 
 user_names = list(set(user_names))
-
+user_names.append("所有人")
 
 
 # List of tasks

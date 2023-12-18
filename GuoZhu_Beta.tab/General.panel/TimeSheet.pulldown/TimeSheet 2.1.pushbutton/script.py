@@ -83,13 +83,20 @@ user_data = Extract(modified_f,-1)
 # Each individual users name
 unique_user = list(set(user_data))
 
+cleaned_unique_user = []
+#clean the polluted data
+for i in unique_user:
+    if user_data.count(i)>10:
+        cleaned_unique_user.append(i)
+
+
 #Calculate individual  user's time for different ratio
 user_modi_time_str = []
 user_add_time_str = []
 user_del_time_str = []
 
 #All modification time
-for i in unique_user:
+for i in cleaned_unique_user:
     usertime = []
     
     #Calculate individual user's time
@@ -105,7 +112,7 @@ for i in unique_user:
     user_modi_time_str.append(usertime)
 
 #All adding time
-for i in unique_user:
+for i in cleaned_unique_user:
     usertime = []
     
     #Calculate individual user's time
@@ -121,7 +128,7 @@ for i in unique_user:
     user_add_time_str.append(usertime)
 
 #All del time
-for i in unique_user:
+for i in cleaned_unique_user:
     usertime = []
     
     #Calculate individual user's time
@@ -162,7 +169,7 @@ for i in user_modi_time_str:
 
 
 outData = []
-for i,j,k,l in zip(unique_user,user_add_time,user_modi_time,user_del_time):
+for i,j,k,l in zip(cleaned_unique_user,user_add_time,user_modi_time,user_del_time):
     if ToMinute(j)+ToMinute(k)+ToMinute(l) ==0:
         pass
     else:

@@ -12,8 +12,10 @@ from Autodesk.Revit.DB import*
 
 from pyrevit import forms,script
 
+
 doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application
+uidoc = __revit__.ActiveUIDocument
 
 # Creating collector instance and collecting all the stiffeners from the model
 collector = FilteredElementCollector(doc).OfClass(ImportInstance).ToElements()
@@ -45,10 +47,8 @@ t.Commit()
 
 elements = FilteredElementCollector(doc).WhereElementIsNotElementType().ToElementIds()
 
-ele = [doc.GetElement(e_id) for e_id in uidoc.Selection.GetElementIds()]
-type = [i.Name for i in ele]
 
-uniqueList = list(set(type))
-print(len(uniqueList))
+
+
 
 print(len(elements))

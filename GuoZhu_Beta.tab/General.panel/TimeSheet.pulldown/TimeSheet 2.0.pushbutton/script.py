@@ -60,26 +60,33 @@ if source_file is not None:
                 modified_f.append(clean_data)
 
         
-
     #Sorted data by user name, user names are the last index of the list
     #sorted_data = sorted(modified_f, key=lambda data: data[-1])
     user_data = Extract(modified_f,-1)
-
+    
     # Each individual users name
     unique_user = list(set(user_data))
+    cleaned_unique_user = []
+    #clean the polluted data
+    for i in unique_user:
+        if user_data.count(i)>10:
+            cleaned_unique_user.append(i)
+
 
     #Calculate individual  user's time
     individual_user_time_str = []
 
 
-    for i in unique_user:
+    for i in cleaned_unique_user:
         usertime = []
         
         #Calculate individual user's time
         for dataRow in modified_f:
             
             if dataRow[-1] == i:
+
                 date = dataRow[0]
+                
                 time = dataRow[1]
                 date_time = date+"_"+time
                 usertime.append(date_time)
@@ -100,7 +107,7 @@ if source_file is not None:
         
 
 
-    for i,j in zip(unique_user,individual_user_time):
+    for i,j in zip(cleaned_unique_user,individual_user_time):
         txt = "{}  建模时间:  {}"
         print(txt.format(i,j))
 
@@ -118,7 +125,7 @@ if source_file is not None:
     chart = output.make_pie_chart()
 
     # Set the labels for the circumference axis
-    chart.data.labels = unique_user
+    chart.data.labels = cleaned_unique_user
 
     # Create new data sets
     set_a = chart.data.new_dataset('set_a')

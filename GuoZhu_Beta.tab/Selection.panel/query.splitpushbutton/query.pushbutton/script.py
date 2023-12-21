@@ -1,94 +1,190 @@
 # -*- coding: utf-8 -*-
 import json	
 import clr
-
-clr.AddReference('System')
-from System.Collections.Generic import List
+import math
 
 from pyrevit import forms	
 from pyrevit import script
 
-import Autodesk
 from Autodesk.Revit.DB import*
+from Autodesk.Revit.UI.Selection import ObjectType
 
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
-active_view = uidoc.ActiveView
 
-# type:(List[ElementId], View) -> None
-#Function to Isolate Elements in the given View.
-def isolate_elements(elements, view):
+#Revti reference face to face & get edges
+face_ref = uidoc.Selection.PickObject(ObjectType.Face)
+face = doc.GetElement(face_ref).GetGeometryObjectFromReference(face_ref)
 
-    hide_elem = FilteredElementCollector(doc, view.Id).Excluding(elements).WhereElementIsNotElementType().ToElements()
+#function selecte rotation edge
+def rotaEdge(face):
+    uvX = face.XVector
+    uvY = face.YVector
+    print(uvX)
+    print(uvY)
 
-    hide_elem_ids = [e.Id for e in hide_elem 
-                      if e.CanBeHidden(view)]
+    if uvX.Z == 1 or uvX.Z == -1:
+        return uvY
+    else:
+        return uvX
 
-    view.HideElements(List[ElementId](hide_elem_ids))
+#function selecte the rotation edge
+def RotaEdgeGama(face):
+    uvX = face.XVector
+    uvY = face.YVector
+    if round(math.degrees(uvX.AngleTo(XYZ(0, 0, 1)))) ==90:
+        return uvX
+    else:
+        return uvY
+    
+def NoneRotaEdgeGama(face):
+    uvX = face.XVector
+    uvY = face.YVector
+    if round( math.degrees(uvX.AngleTo(XYZ(0, 0, 1)))) == 90 :
+        return uvY
+    else:
+        return uvX
+
+#function selecte the smaller degrees
+def chooseAng(axis):
+    testAng1 = math.degrees(axis.AngleTo(XYZ(1, 0, 0)))
+    testAng2 = math.degrees(axis.AngleTo(XYZ(0, 1, 0)))
+    if testAng1 >= testAng2:
+        return testAng2
+    else:
+        return testAng1
+
+#Get the selected element's mark from the face_ref
+ele_id = face_ref.ElementId
+ele_mark = doc.GetElement(ele_id).LookupParameter("工厂加工-零件标号").AsString()
 
 
-#input view name
-value = forms.ask_for_string(
-        
-        prompt='输入视图名称:',
-        title='View Title Input'
-    )
+faceOrigin = face.Origin
+faceNormal = face.ComputeNormal(UV(0.5,0.5))
+ang = math.degrees(faceNormal.AngleTo(XYZ(0, 0, 1)))
 
-try:
+print(faceNormal)
+print("---"*50)
+curves = []
 
-    groupEle_to_isolate = [doc.GetElement(e_id) for e_id in uidoc.Selection.GetElementIds()]
+# print(ang)
 
-    part_mark = groupEle_to_isolate[0].LookupParameter("工厂加工-构件标号").AsString()
+if ang==0 or ang==180:
+    curveLoops = face.GetEdgesAsCurveLoops()
 
-    if part_mark is not None:
+    for loops in curveLoops:
 
-        #STAR THE TRANSACTION!!!
-        t = Transaction(doc, 'Isolate Elements')
-        t.Start()
+        iterator = loops.GetCurveLoopIterator()
+        while iterator.MoveNext():
+            curves.append(iterator.Current)
+    
 
-        # Get all members of the model group
-        members = []
-        for i in groupEle_to_isolate:
-            subList = i.GetMemberIds()
-            for subi in subList:
-                members.append(subi)
+elif ang == 90 or ang ==270:
+    #Rotate on the XY plane
+
+    axis = rotaEdge(face)
+    print("---"*50)
+    print(axis)
+    curveLoops = face.GetEdgesAsCurveLoops()
+    
+    transform1 = Transform.CreateRotationAtPoint(axis, 90 * (math.pi / 180),faceOrigin)
+    curveLoopsTrans1 = [CurveLoop.CreateViaTransform(c,transform1) for c in curveLoops]
 
 
-        # casting list to IcCollection
-        iCcollection = List[ElementId](members)
+    #Rotate on the YZ plane
+    #select rotation degrees
+    angBeta = chooseAng(axis)
+    
+    transform2 = Transform.CreateRotationAtPoint(XYZ(0,0,1), angBeta* (math.pi / 180),faceOrigin)
+    curveLoopsTrans2 = [CurveLoop.CreateViaTransform(c,transform2) for c in curveLoopsTrans1]
+    
+    for loops in curveLoopsTrans2:
 
-        #Created new view with name
-        new_viewId = active_view.Duplicate(ViewDuplicateOption.Duplicate)
-        new_view_ele = doc.GetElement(new_viewId)
-        name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
+        iterator = loops.GetCurveLoopIterator()
+        while iterator.MoveNext():
+            curves.append(iterator.Current)
+    
+else:
+      #Rotate on the XY plane
 
-        if  len(value)==0:
 
-            name.Set(part_mark)
+    uvX = face.XVector
+    
+    math.degrees(uvX.AngleTo(XYZ(0, 0, 1)))
+
+    axis = RotaEdgeGama(face)
+    noneAxis = NoneRotaEdgeGama(face)
+
+    #Choosing the smaller degrees
+    def choseAngeGama(axis):
+        angG1 = math.degrees(axis.AngleTo(XYZ(0, 0, 1)))
+        angG2 = math.degrees(axis.AngleTo(XYZ(0, 0, -1)))
+        if angG1 >= angG2:
+            return angG2
         else:
-            name.Set(value)
+            return angG1
+    choosenAng = choseAngeGama(noneAxis)
+
+    curveLoops = face.GetEdgesAsCurveLoops()
+    
+    transform = Transform.CreateRotationAtPoint(axis, (90-choosenAng)* (math.pi / 180),faceOrigin)
+    curveLoopsTrans = [CurveLoop.CreateViaTransform(c,transform) for c in curveLoops]
 
 
-        #isolate the element
-        isolate_elements(iCcollection, new_view_ele)
+    #Rotate on the YZ plane
+    #select rotation degrees
+    def choseAngeGama2(axis):
+        angG1 = math.degrees(axis.AngleTo(XYZ(0, 1, 0)))
+        if angG1 <90:
+            return angG1
+        else:
+            return (180-angG1)
+            
+    angGama = choseAngeGama2(axis)
+    
+    transform = Transform.CreateRotationAtPoint(XYZ(0,0,1), angGama* (math.pi / 180),faceOrigin)
+    curveLoopsTrans = [CurveLoop.CreateViaTransform(c,transform) for c in curveLoopsTrans]
+
+    for loops in curveLoopsTrans:
+
+        iterator = loops.GetCurveLoopIterator()
+        while iterator.MoveNext():
+            curves.append(iterator.Current)
+    
 
 
-        #create bounding box and offset around element
-        bbox = groupEle_to_isolate[0].get_BoundingBox(None)
-        box_max = bbox.Max
-        box_min = bbox.Min
-        factor = 0.01
-        new_box_max = box_max.Add(XYZ(factor,factor,factor))
-        new_box_min = box_min.Add(XYZ(-factor,-factor,-factor))
+# print("-"*100)
+# print(curveLoops[0].GetPlane().Normal)
 
-        new_bbox = BoundingBoxXYZ()
-        new_bbox.Max = new_box_max
-        new_bbox.Min = new_box_min
-        new_view_ele.SetSectionBox(new_bbox)
+# print("-"*100)
+# print(curveLoopsTrans[0].GetPlane().Normal)
+# print("-"*100)
+# print("-"*100)
 
-        t.Commit()
+# #print(json.dumps(dataListRow,encoding ='utf-8',ensure_ascii=False))
 
-    else :
-        forms.alert('工厂加工-零件标号不能为空值', exitscript=True)
-except:
-    forms.alert('未选择模型物体', exitscript=True)
+if ele_mark is not None:
+
+    #Start Transaction
+    t = Transaction(doc, 'Create Plate Drawing')
+    t.Start()
+
+
+    #Create new Drafting view
+    view_types = FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements()
+
+    view_types_drafting = [vt for vt in view_types if vt.ViewFamily == ViewFamily.Drafting]
+    view_type_drafting  = view_types_drafting[0]
+
+    new_view = ViewDrafting.Create(doc,view_type_drafting.Id)
+    new_view.Name= ele_mark
+
+    for c in curves:
+
+        detail_curve = doc.Create.NewDetailCurve(new_view, c)
+
+
+    t.Commit()
+
+else:
+    forms.alert('需要零件标号', exitscript=True)

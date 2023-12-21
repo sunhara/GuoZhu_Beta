@@ -27,7 +27,7 @@ if len(groupEle_to_isolate) !=0 :
     bbox = groupEle_to_isolate[0].get_BoundingBox(None)
     box_max = bbox.Max
     box_min = bbox.Min
-    factor = 0.01
+    factor = 0.001
     new_box_max = box_max.Add(XYZ(factor,factor,factor))
     new_box_min = box_min.Add(XYZ(-factor,-factor,-factor))
 

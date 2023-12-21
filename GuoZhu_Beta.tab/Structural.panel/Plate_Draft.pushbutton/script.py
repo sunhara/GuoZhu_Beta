@@ -20,8 +20,8 @@ face = doc.GetElement(face_ref).GetGeometryObjectFromReference(face_ref)
 def rotaEdge(face):
     uvX = face.XVector
     uvY = face.YVector
-    
-    if uvX == XYZ(0,0,1):
+
+    if uvX.Z == 1 or uvX.Z == -1:
         return uvY
     else:
         return uvX
@@ -61,44 +61,40 @@ faceOrigin = face.Origin
 faceNormal = face.ComputeNormal(UV(0.5,0.5))
 ang = math.degrees(faceNormal.AngleTo(XYZ(0, 0, 1)))
 
+
 curves = []
 
+# print(ang)
 
 if ang==0 or ang==180:
     curveLoops = face.GetEdgesAsCurveLoops()
 
-    #Rotate on the XY plane
-    angdiff = math.degrees(face.XVector.AngleTo(XYZ(1, 0, 0)))
-    transform = Transform.CreateRotationAtPoint(XYZ(0,0,1), - angdiff * (math.pi / 180),faceOrigin)
-
-    curveLoopsTrans = [CurveLoop.CreateViaTransform(c,transform) for c in curveLoops]
-
-    for loops in curveLoopsTrans:
+    for loops in curveLoops:
 
         iterator = loops.GetCurveLoopIterator()
         while iterator.MoveNext():
             curves.append(iterator.Current)
     
 
-elif ang == 90:
+elif ang == 90 or ang ==270:
     #Rotate on the XY plane
 
     axis = rotaEdge(face)
 
     curveLoops = face.GetEdgesAsCurveLoops()
     
-    transform = Transform.CreateRotationAtPoint(axis, 90 * (math.pi / 180),faceOrigin)
-    curveLoopsTrans = [CurveLoop.CreateViaTransform(c,transform) for c in curveLoops]
+    transform1 = Transform.CreateRotationAtPoint(axis, 90 * (math.pi / 180),faceOrigin)
+    curveLoopsTrans1 = [CurveLoop.CreateViaTransform(c,transform1) for c in curveLoops]
 
 
     #Rotate on the YZ plane
     #select rotation degrees
     angBeta = chooseAng(axis)
     
-    transform = Transform.CreateRotationAtPoint(XYZ(0,0,1), angBeta* (math.pi / 180),faceOrigin)
-    curveLoopsTrans = [CurveLoop.CreateViaTransform(c,transform) for c in curveLoopsTrans]
-
-    for loops in curveLoopsTrans:
+    transform2 = Transform.CreateRotationAtPoint(XYZ(0,0,1), angBeta* (math.pi / 180),faceOrigin)
+    curveLoopsTrans2 = [CurveLoop.CreateViaTransform(c,transform2) for c in curveLoopsTrans1]
+    
+    for loops in curveLoopsTrans2:
 
         iterator = loops.GetCurveLoopIterator()
         while iterator.MoveNext():
@@ -153,15 +149,15 @@ else:
     
 
 
-print("-"*100)
-print(curveLoops[0].GetPlane().Normal)
+# print("-"*100)
+# print(curveLoops[0].GetPlane().Normal)
 
-print("-"*100)
-print(curveLoopsTrans[0].GetPlane().Normal)
-print("-"*100)
-print("-"*100)
+# print("-"*100)
+# print(curveLoopsTrans[0].GetPlane().Normal)
+# print("-"*100)
+# print("-"*100)
 
-#print(json.dumps(dataListRow,encoding ='utf-8',ensure_ascii=False))
+# #print(json.dumps(dataListRow,encoding ='utf-8',ensure_ascii=False))
 
 if ele_mark is not None:
 

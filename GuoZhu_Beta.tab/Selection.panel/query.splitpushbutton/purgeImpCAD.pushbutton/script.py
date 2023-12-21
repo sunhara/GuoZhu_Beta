@@ -47,8 +47,13 @@ t.Commit()
 
 elements = FilteredElementCollector(doc).WhereElementIsNotElementType().ToElementIds()
 
+selected_ID = uidoc.Selection.GetElementIds()
+
+selected_eles = [doc.GetElement(i).Name for i in selected_ID]
 
 
-
-
+print("total elements")
 print(len(elements))
+print("selected types")
+out1 = list(set(selected_eles))
+print(len(out1))

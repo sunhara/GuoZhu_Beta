@@ -56,11 +56,12 @@ try:
         name = new_view_ele.get_Parameter(BuiltInParameter.VIEW_NAME)
 
         #Name for the View default or input
-        if value is None:
+        if len(value)==0:
 
             name.Set(part_mark)
         else:
             name.Set(value)
+        
         
         #isolate the element
         isolate_elements(List_isolate_ids, new_view_ele)

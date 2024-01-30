@@ -6,3 +6,4 @@ layout:
   - BatchExpoSchedulesSingle
   - BatchExpoSchedulesOnSheet
   - BatchExpoSchedulesMultiMatArea
+  - BatchDWGSingle

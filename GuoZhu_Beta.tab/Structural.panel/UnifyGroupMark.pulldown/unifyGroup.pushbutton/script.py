@@ -17,7 +17,7 @@ selection = __revit__.ActiveUIDocument.Selection.GetElementIds()
 model_groups = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_IOSModelGroups).WhereElementIsNotElementType().ToElements()
 
 #STAR THE TRANSACTION!!!
-t = Transaction(doc, 'Isolate Elements')
+t = Transaction(doc, 'Unifi Elements')
 t.Start()
 
 # Get all members of the model group
@@ -41,6 +41,18 @@ for m in model_groups:
     else:
         pass
 
+    try:
+        level_mark = m.LookupParameter("楼层位置").AsString()
+
+        for e in eles:       
+            element = doc.GetElement(e)
+            elementMark = element.LookupParameter("楼层位置")
+            if elementMark is not None:
+                elementMark.Set(level_mark)
+            else:
+                pass
+    except:
+        pass
 
 t.Commit()
 

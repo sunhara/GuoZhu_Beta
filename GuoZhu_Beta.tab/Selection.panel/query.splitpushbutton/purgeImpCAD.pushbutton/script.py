@@ -5,7 +5,7 @@ import json
 
 clr.AddReference('System')
 from System.Collections.Generic import List
-
+from Autodesk.Revit.UI import*
 
 import Autodesk
 from Autodesk.Revit.DB import*
@@ -16,6 +16,7 @@ from pyrevit import forms,script
 doc = __revit__.ActiveUIDocument.Document
 app = __revit__.Application
 uidoc = __revit__.ActiveUIDocument
+uiapp = __revit__
 
 # Creating collector instance and collecting all the stiffeners from the model
 collector = FilteredElementCollector(doc).OfClass(ImportInstance).ToElements()
@@ -57,3 +58,10 @@ print(len(elements))
 print("selected types")
 out1 = list(set(selected_eles))
 print(len(out1))
+
+
+CmndID = RevitCommandId.LookupCommandId('ID_SETTINGS_PARTITIONS')
+postCmndID = RevitCommandId.LookupPostableCommandId(PostableCommand.Worksets)
+print(postCmndID)
+CmId = CmndID.Id
+uiapp.PostCommand(postCmndID)

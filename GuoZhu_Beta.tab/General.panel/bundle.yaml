@@ -10,3 +10,4 @@ layout:
   - TransferData
   - SendMessage
   - TaskPanel
+  - DrawingUpdate

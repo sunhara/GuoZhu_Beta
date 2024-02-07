@@ -4,3 +4,5 @@ title:
 layout:
   - query
   - purgeImpCAD
+  - administrator
+  - administratorUpdate

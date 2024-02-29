@@ -1,23 +1,30 @@
-# -*- coding: utf-8 -*-
-import xml.etree.ElementTree as ET
+#! python3
+import xml.etree.cElementTree as ET
+import os
 
 from pyrevit import HOST_APP, EXEC_PARAMS
 
+username = os.environ.get('USERNAME')
 
-#Public config and local config
-public_config = "\\\\10.1.37.5\\国住共享文件夹\\国住设计区\\设计共享区\\BIM项目\\pyRevitExtension\\GUOZHU_Beta.extension\\GUOZHU_Beta_config.xml"
+# local config
+
+local_config = "C:\\Users\\{}\\AppData\\Roaming\\pyRevit\\GUOZHU_Beta_local_config.xml".format(username)
 
 args = EXEC_PARAMS.event_args
 
 app = __revit__.Application
 app_username = app.Username
 
-tree = ET.parse(public_config)
+
+tree = ET.parse(local_config)
 root = tree.getroot()
+
+
 
 target_user = []
 for user in root.findall("user"):
 
+    # print(user.get("name"))
     if user.get("name") == app_username:
         target_user.append(user)
 
@@ -25,9 +32,19 @@ for user in root.findall("user"):
 try: 
 
     if target_user[0].find("workset").text=="True":
+        
         args.CanExecute = True
+        
+        root.clear()
+        
+
     else:
         args.CanExecute = False
-    
+
+        root.clear()      
+
+
 except:
     args.CanExecute = False
+
+    root.clear()

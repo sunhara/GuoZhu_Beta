@@ -1,0 +1,10 @@
+title:
+  en_us: "Sync Layers"
+  chinese_s: "同步构造"
+layout:
+  - syncLayers
+  - syncLayerPrefabWall
+
+
+
+

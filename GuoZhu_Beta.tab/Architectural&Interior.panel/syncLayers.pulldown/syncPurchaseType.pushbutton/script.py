@@ -5,7 +5,6 @@ from pyrevit import forms, script
 from Autodesk.Revit.DB import*
 from Autodesk.Revit.UI.Selection import*
 
-
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
 
@@ -40,23 +39,35 @@ for famType in u_shape_collec:
     u_t1 = famType.LookupParameter("U型件t1").AsValueString()
     u_h1 = famType.LookupParameter("U型件h1").AsValueString()
 
+    
+    #check if the u shape is cold formed
     try:
-        u_h2 = famType.LookupParameter("U型件h2").AsValueString()
-        new_value = "U {}x{}x{}x{}".format(u_w,u_h1,u_h2,u_t1)
-        # print(new_value)
+        cold_formed = famType.LookupParameter("是否为弯折钢板").AsValueString() and cold_formed == "Yes"
+             
         t = Transaction(doc,"Assign value")
         t.Start()
-        targetValue.Set(new_value)
+        targetValue.Set(u_t1)
         t.Commit()
 
     except:
 
-        new_value = "U {}x{}x{}".format(u_w,u_h1,u_t1)
-        # print(new_value)
-        t = Transaction(doc,"Assign value")
-        t.Start()
-        targetValue.Set(new_value)
-        t.Commit()
+        try:
+            u_h2 = famType.LookupParameter("U型件h2").AsValueString()
+            new_value = "U {}x{}x{}x{}".format(u_w,u_h1,u_h2,u_t1)
+            # print(new_value)
+            t = Transaction(doc,"Assign value")
+            t.Start()
+            targetValue.Set(new_value)
+            t.Commit()
+
+        except:
+            new_value = "U {}x{}x{}".format(u_w,u_h1,u_t1)
+            # print(new_value)
+            t = Transaction(doc,"Assign value")
+            t.Start()
+            targetValue.Set(new_value)
+            t.Commit()
+
 
 
 for famType in rhs_shape_collec:

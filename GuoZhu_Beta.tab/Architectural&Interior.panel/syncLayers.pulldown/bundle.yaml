@@ -1,9 +1,10 @@
 title:
-  en_us: "Sync Layers"
-  chinese_s: "同步构造"
+  en_us: "Sync Info"
+  chinese_s: "同步构造信息"
 layout:
   - syncLayers
   - syncLayerPrefabWall
+  - syncPurchaseType
 
 
 

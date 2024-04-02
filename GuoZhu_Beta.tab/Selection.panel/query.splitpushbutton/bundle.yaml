@@ -6,3 +6,4 @@ layout:
   - purgeImpCAD
   - administrator
   - administratorUpdate
+  - changeLineWeight

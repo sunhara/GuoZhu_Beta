@@ -2,7 +2,7 @@ title:
   en_us: Architectural&Interior
   chinese_s: "建筑/室内"
 layout:
-  - WIP
+  - SplitLayer
   - syncLayers
   - MaterialDensity
   - EasyCopy

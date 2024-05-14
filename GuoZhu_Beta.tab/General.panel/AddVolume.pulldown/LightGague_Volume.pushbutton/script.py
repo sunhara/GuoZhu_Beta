@@ -13,22 +13,30 @@ all_TempStr = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Tempo
 all_gague = []
 
 for i in all_TempStr:
-    if  "轻钢" in i.Name:
-        all_gague.append(i)
+
+    matIds = i.GetMaterialIds(False)
+    for matId in matIds:
+
+        mat_name = doc.GetElement(matId).Name
+        if mat_name =="轻钢":
+            all_gague.append(i)
+        else:
+            pass
+
 
 
 for i in all_gague:
     matIds = i.GetMaterialIds(False)
-
+    
     for matId in matIds:
 
         mat_name = doc.GetElement(matId).Name
 
-        if mat_name != "3dProfile":
+        if mat_name == "轻钢":
 
             mat_vol = i.GetMaterialVolume(matId)
             mat_vol_m3 = UnitUtils.ConvertFromInternalUnits(mat_vol,UnitTypeId.CubicMeters)
-            print(mat_vol_m3)
+            
             targetPara = i.LookupParameter("轻钢Volume")
 
             t = Transaction(doc,"light steel gague volume")

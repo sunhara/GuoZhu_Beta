@@ -44,8 +44,6 @@ all_tempStrure.WhereElementIsNotElementType()
 all_Ele = all_tempStrure.ToElements()
 
 
-
-
 for i in all_Ele:
     
     #collect all volume
@@ -59,7 +57,13 @@ for i in all_Ele:
 
     #collect all length
     fam_type = doc.GetElement(i.GetTypeId())
-    len = fam_type.LookupParameter("二次结构-长").AsDouble()
+    
+    try:
+        len = fam_type.LookupParameter("二次结构-长").AsDouble()
+    except:
+        len = i.LookupParameter("二次结构-长").AsDouble()
+
+    
     len_value = str(round(len,5))
     all_ele_length.append(len_value)
 

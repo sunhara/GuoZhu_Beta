@@ -4,5 +4,6 @@ title:
 layout:
   - assignTogether
   - unifyGroup
+  - updateGroup
 
 

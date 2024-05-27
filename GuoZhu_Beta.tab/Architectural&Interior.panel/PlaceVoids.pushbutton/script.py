@@ -32,7 +32,12 @@ else:
     script.exit()
 
 # Collect all family symbol
-allFamily = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_GenericModel).WhereElementIsElementType().ToElements()
+allgeneric = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_GenericModel).WhereElementIsElementType().ToElements()
+allConnection = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructConnections).WhereElementIsElementType().ToElements()
+combineFam = [i for i in allgeneric ] + [j for j in allConnection]
+
+allFamily = List[Element](combineFam)
+
 
 # Selection popup
 options = [ElementToCopy(e) for e in allFamily]

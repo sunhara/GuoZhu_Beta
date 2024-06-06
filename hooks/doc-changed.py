@@ -60,20 +60,20 @@ except:
     pass
 
 #log in modified element id 
-try:
-    #Setup the path or create new path
-    partsLog_path = "\\\\10.1.37.5\国住共享文件夹\国住设计区\设计共享区\BIM项目\项目-Project\\1Aa_WorkLogs\{}\partslog.txt".format(docProject)
+# try:
+#     #Setup the path or create new path
+#     partsLog_path = "\\\\10.1.37.5\国住共享文件夹\国住设计区\设计共享区\BIM项目\项目-Project\\1Aa_WorkLogs\{}\partslog.txt".format(docProject)
 
-    elemIds = args.GetModifiedElementIds()
+#     elemIds = args.GetModifiedElementIds()
 
-    try:
-        for i in elemIds:
+#     try:
+#         for i in elemIds:
             
-            with codecs.open(partsLog_path,'a',encoding='utf-8') as f:
-                f.write("{}".format(i.IntegerValue)+"\n")
+#             with codecs.open(partsLog_path,'a',encoding='utf-8') as f:
+#                 f.write("{}".format(i.IntegerValue)+"\n")
 
-    except:
-        pass
+#     except:
+#         pass
 
-except:
-    pass
+# except:
+#     pass

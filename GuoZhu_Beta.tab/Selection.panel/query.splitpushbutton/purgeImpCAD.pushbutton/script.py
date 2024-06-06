@@ -23,9 +23,10 @@ collector = FilteredElementCollector(doc).OfClass(ImportInstance).ToElements()
 
 for e in collector:
 
-    print(e.Category.Name)
-    print("链接--{}".format(e.IsLinked))
     try:
+        print(e.Category.Name)
+        print("链接--{}".format(e.IsLinked))
+    
         viewname = doc.GetElement(e.OwnerViewId).Name
         print(viewname)
 

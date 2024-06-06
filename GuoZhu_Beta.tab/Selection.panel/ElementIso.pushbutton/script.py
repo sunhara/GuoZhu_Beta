@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json	
 import clr
+import uuid
 
 clr.AddReference('System')
 from System.Collections.Generic import List
@@ -41,6 +42,8 @@ try:
             for e_id in uidoc.Selection.GetElementIds()]
 
     part_mark = elements_to_isolate[0].LookupParameter("工厂加工-零件标号").AsString()
+    GUID = uuid.uuid4()
+    
 
     if part_mark is not None and len(part_mark) != 0:
 
@@ -48,6 +51,7 @@ try:
         t = Transaction(doc, 'Isolate Elements')
         t.Start()
 
+        
         List_isolate_ids = uidoc.Selection.GetElementIds()
 
         #Created new view with name
@@ -79,7 +83,20 @@ try:
         new_bbox.Min = new_box_min
         new_view_ele.SetSectionBox(new_bbox)
 
+
         t.Commit()
+
+        # seconde transaction for assing guid to view and element
+        t2 = Transaction(doc, 'assign GUID')
+        t2.Start()
+
+        targetEleGUID = elements_to_isolate[0].LookupParameter("视口关联GUID")
+        targetEleGUID.Set(str(GUID))
+
+        targetViewGUID = new_view_ele.LookupParameter("视口关联GUID")
+        targetViewGUID.Set(str(GUID))
+
+        t2.Commit()
 
     else :
         forms.alert('工厂加工-零件标号不能为空值', exitscript=True)

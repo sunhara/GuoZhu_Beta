@@ -14,19 +14,8 @@ selected_views  = [doc.GetElement(e_id) for e_id in uidoc.Selection.GetElementId
 
 
 
-# filter all needed views
-# for i in allViews:
-
-#     print(i.Name)
-#     print(i.ViewType)
-#     print(i.LookupParameter("视口关联GUID").AsString())
-
-#     if i.ViewType == ViewType.ThreeD and i.LookupParameter("视口关联GUID").AsString() != None:
-#         targetViews.append(i)
-
-
-t = Transaction(doc,"rename")
-t.Start()
+# t = Transaction(doc,"rename")
+# t.Start()
 
 
 for i in selected_views:
@@ -38,22 +27,28 @@ for i in selected_views:
 
     #the elements in the view
     
-    for j in elements:
+    print(elements)
+    for i in elements:
+        print(i.Name)
+        print(i.Category.Name)
 
-        try:
-            eleGuid = j.LookupParameter("视口关联GUID").AsString()
-            partMark = j.LookupParameter("工厂加工-零件标号").AsString()
+        
+    # for j in elements:
+
+    #     try:
+    #         eleGuid = j.LookupParameter("视口关联GUID").AsString()
+    #         partMark = j.LookupParameter("工厂加工-零件标号").AsString()
             
-            if viewGuid == eleGuid:
+    #         if viewGuid == eleGuid:
 
-                viewName.Set(partMark)
+    #             viewName.Set(partMark)
 
-        except:
-            pass
+    #     except:
+    #         pass
 
 
 # if value == None:
 #     script.exit()
 
 
-t.Commit()
+# t.Commit()

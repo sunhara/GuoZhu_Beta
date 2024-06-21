@@ -22,8 +22,6 @@ if len(selection) == 0:
 else:
     pass
 
-views = []
-
 target_folder = forms.pick_folder()
 
 # check for directory
@@ -33,13 +31,20 @@ else:
     pass
 
 option = DWGExportOptions()
+option.HideScopeBox = True
+option.MergedViews = True
+option.FileVersion = ACADVersion.R2013
+
 # Loop through the element IDs and get the corresponding Revit element for each ID
 for i in selection:
 
     element = doc.GetElement(i)
+
     name = element.Name
-    views.append(name)
+    sheetNumber = element.SheetNumber
+    outputName = sheetNumber+"_"+name
+
 
     icollectionID = List[ElementId]([i])
   
-    doc.Export(target_folder,name,icollectionID,option)
+    doc.Export(target_folder,outputName,icollectionID,option)

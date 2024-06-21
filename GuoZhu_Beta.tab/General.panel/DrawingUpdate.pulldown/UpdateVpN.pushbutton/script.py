@@ -13,18 +13,6 @@ uidoc = __revit__.ActiveUIDocument
 selected_views  = [doc.GetElement(e_id) for e_id in uidoc.Selection.GetElementIds()]
 
 
-
-# filter all needed views
-# for i in allViews:
-
-#     print(i.Name)
-#     print(i.ViewType)
-#     print(i.LookupParameter("视口关联GUID").AsString())
-
-#     if i.ViewType == ViewType.ThreeD and i.LookupParameter("视口关联GUID").AsString() != None:
-#         targetViews.append(i)
-
-
 t = Transaction(doc,"rename")
 t.Start()
 

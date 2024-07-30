@@ -7,4 +7,5 @@ layout:
   - frameNum
   - plateNum
   - secondary_structure
+  - genericNum
 
